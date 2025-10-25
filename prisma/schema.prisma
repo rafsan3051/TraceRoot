@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  FARMER
+  DISTRIBUTOR
+  RETAILER
+  CONSUMER
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  password      String
+  verified      Boolean   @default(false)
+  role          Role      @default(CONSUMER)
+  phoneNumber   String?
+  address       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  products      Product[] // Only for farmers
+  
+  @@map("users")
+}
+
+model Product {
+  id             String             @id @default(uuid())
+  name           String
+  origin         String
+  manufactureDate DateTime
+  qrCodeUrl      String?
+  blockchainTxId String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  farmerId       String            // Reference to the farmer who created the product
+  farmer         User              @relation(fields: [farmerId], references: [id])
+  events         SupplyChainEvent[]
+  price          Decimal           @db.Decimal(10, 2)
+  description    String?           @db.Text
+  category       String
+  imageUrl       String?
+
+  @@map("products")
+}
+
+model SupplyChainEvent {
+  id             String   @id @default(uuid())
+  productId      String
+  eventType      String
+  location       String
+  timestamp      DateTime @default(now())
+  blockchainTxId String?
+  product        Product  @relation(fields: [productId], references: [id])
+  temperature    Float?   // For tracking storage conditions
+  humidity      Float?   // For tracking storage conditions
+  notes         String?  @db.Text
+
+  @@map("supply_chain_events")
+}

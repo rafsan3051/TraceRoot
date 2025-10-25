@@ -2,6 +2,12 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]
-    }
-  }
+    },
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "ignoreDeprecations": "6.0"
+  },
+  "exclude": ["node_modules"]
 }

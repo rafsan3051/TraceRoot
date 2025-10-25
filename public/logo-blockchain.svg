@@ -1,0 +1,28 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blockchain cube icon -->
+  <g transform="translate(5, 8)">
+    <!-- Front face -->
+    <path d="M12 8 L20 4 L20 16 L12 20 Z" fill="#3B82F6" opacity="0.9"/>
+    <!-- Top face -->
+    <path d="M12 8 L20 4 L28 8 L20 12 Z" fill="#60A5FA" opacity="0.9"/>
+    <!-- Right face -->
+    <path d="M20 12 L28 8 L28 20 L20 16 Z" fill="#2563EB" opacity="0.9"/>
+    
+    <!-- Connection lines (blockchain link) -->
+    <line x1="28" y1="14" x2="34" y2="14" stroke="#10B981" stroke-width="2"/>
+    <circle cx="34" cy="14" r="2" fill="#10B981"/>
+  </g>
+
+  <!-- TraceRoot Text -->
+  <text x="45" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#1F2937">
+    Trace
+  </text>
+  <text x="110" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="700" fill="#10B981">
+    Root
+  </text>
+  
+  <!-- Tagline -->
+  <text x="45" y="43" font-family="system-ui, -apple-system, sans-serif" font-size="8" font-weight="500" fill="#6B7280" letter-spacing="1">
+    BLOCKCHAIN VERIFIED
+  </text>
+</svg>
