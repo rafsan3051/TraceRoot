@@ -34,3 +34,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# blockchain
+/cache
+/artifacts
+/contracts/cache
+deployments/
+.openzeppelin/
+
+# security - NEVER commit these!
+**/.env
+**/private-keys/
+**/wallet/
+**/*.key
+**/*.pem
+**/secrets/

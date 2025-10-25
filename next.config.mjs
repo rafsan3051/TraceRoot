@@ -23,7 +23,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
@@ -32,6 +32,18 @@ const nextConfig = {
     };
     // Add support for importing .tsx files without extension
     config.resolve.extensions = ['.js', '.jsx', '.ts', '.tsx', ...config.resolve.extensions || []];
+    
+    // Make ethers optional - only load if USE_REAL_BLOCKCHAIN is true
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      'ethers': false,
+    };
+    
+    // Externalize ethers for server-side to avoid bundling
+    if (isServer) {
+      config.externals = [...(config.externals || []), 'ethers'];
+    }
+    
     return config;
   },
 };
