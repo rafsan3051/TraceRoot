@@ -12,8 +12,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        // Not logged in, redirect to login
-        router.push('/auth/login')
+        // Not logged in, redirect to auth page
+        router.push('/auth')
       } else {
         // Redirect based on role
         switch (user.role) {

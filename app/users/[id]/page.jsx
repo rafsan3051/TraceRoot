@@ -1,27 +1,20 @@
  'use client'
 
-import { useState, useEffect } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
 
 export default function UserProfilePage({ params }) {
+  const resolvedParams = use(params)
   const { user: currentUser } = useAuth()
   const [user, setUser] = useState(null)
   const [activities, setActivities] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    const load = async () => {
-      await Promise.all([fetchUserData(), fetchUserActivities()])
-      setLoading(false)
-    }
-    load()
-  }, [])
-
   const fetchUserData = async () => {
     try {
-      const res = await fetch(`/api/users/${params.id}`)
+      const res = await fetch(`/api/users/${resolvedParams.id}`)
       const data = await res.json()
       if (data.error) setError(data.error)
       else setUser(data.user)
@@ -32,7 +25,7 @@ export default function UserProfilePage({ params }) {
 
   const fetchUserActivities = async () => {
     try {
-      const res = await fetch(`/api/users/${params.id}/activities`)
+      const res = await fetch(`/api/users/${resolvedParams.id}/activities`)
       const data = await res.json()
       if (!data.error) setActivities(data)
     } catch (e) {
@@ -42,13 +35,22 @@ export default function UserProfilePage({ params }) {
 
   const verifyUser = async () => {
     try {
-      const res = await fetch(`/api/admin/verify-user/${params.id}`, { method: 'POST' })
+      const res = await fetch(`/api/admin/verify-user/${resolvedParams.id}`, { method: 'POST' })
       if (res.ok) await fetchUserData()
     } catch (e) {
       // log only
       console.error(e)
     }
   }
+
+  useEffect(() => {
+    const load = async () => {
+      await Promise.all([fetchUserData(), fetchUserActivities()])
+      setLoading(false)
+    }
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) {
     return (

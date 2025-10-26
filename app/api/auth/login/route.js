@@ -7,16 +7,15 @@ export async function POST(request) {
   try {
     const { email, password } = await request.json()
 
-    // Try to find user by email first, then by name (username)
-    let user = await prisma.user.findUnique({
-      where: { email }
-    })
+    // Try to find user by email first, then by username, then fallback to name for backward compatibility
+    let user = await prisma.user.findUnique({ where: { email } })
 
-    // If not found by email, try to find by name
     if (!user) {
-      user = await prisma.user.findFirst({
-        where: { name: email } // User entered username in email field
-      })
+      user = await prisma.user.findUnique({ where: { username: email } }).catch(() => null)
+    }
+
+    if (!user) {
+      user = await prisma.user.findFirst({ where: { name: email } }) // legacy fallback
     }
 
     if (!user) {
@@ -43,15 +42,16 @@ export async function POST(request) {
     })
 
     // Set cookie
-    cookies().set('auth-token', token, {
+    const cookieStore = await cookies()
+    cookieStore.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 // 24 hours
     })
 
-    // Return user data (excluding password)
-    const { password: _, ...userData } = user
+  // Return user data (excluding password)
+  const { password: _, ...userData } = user
     return NextResponse.json({ user: userData })
   } catch (error) {
     console.error('Login error:', error)

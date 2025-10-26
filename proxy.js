@@ -1,39 +1,39 @@
-import { NextResponse } from 'next/server';
-import { verifyAuth } from './lib/auth/auth-utils';
+import { NextResponse } from 'next/server'
+import { verifyAuth } from './lib/auth/auth-utils'
 
 // Define paths at the top level for better performance
-const PUBLIC_PATHS = ['/', '/login', '/register'];
+const PUBLIC_PATHS = ['/', '/auth', '/auth/register']
 const ROLE_PATHS = {
   '/admin': 'ADMIN',
   '/farmer': 'FARMER',
   '/retailer': 'RETAILER',
-  '/distributor': 'DISTRIBUTOR'
-};
- 
-export async function middleware(request) {
-  try {
-    const pathname = request.nextUrl.pathname;
+  '/distributor': 'DISTRIBUTOR',
+}
 
-    // Check public paths first
+export async function proxy(request) {
+  try {
+    const pathname = request.nextUrl.pathname
+
+    // Allow public paths
     if (PUBLIC_PATHS.includes(pathname)) {
-      return NextResponse.next();
+      return NextResponse.next()
     }
 
     // Verify authentication
-    const token = request.cookies.get('auth-token')?.value;
+    const token = request.cookies.get('auth-token')?.value
     if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth', request.url))
     }
 
-    const verifiedToken = await verifyAuth(token);
+    const verifiedToken = await verifyAuth(token)
     if (!verifiedToken) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth', request.url))
     }
 
-    // Check role-based access
+    // Role-based access
     for (const [path, role] of Object.entries(ROLE_PATHS)) {
       if (pathname.startsWith(path) && verifiedToken.role !== role) {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/', request.url))
       }
     }
 
@@ -45,17 +45,17 @@ export async function middleware(request) {
       pathname.startsWith('/products/register')
     ) {
       if (verifiedToken.role !== 'FARMER') {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/', request.url))
       }
     }
 
-    return NextResponse.next();
+    return NextResponse.next()
   } catch (error) {
-    console.error('Middleware error:', error);
-    return NextResponse.redirect(new URL('/login', request.url));
+    console.error('Proxy error:', error)
+    return NextResponse.redirect(new URL('/auth', request.url))
   }
 }
- 
+
 export const config = {
   matcher: [
     '/admin/:path*',
@@ -67,6 +67,6 @@ export const config = {
     '/product/register',
     '/products/create',
     '/products/register',
-    '/product/edit/:path*'
-  ]
+    '/product/edit/:path*',
+  ],
 }

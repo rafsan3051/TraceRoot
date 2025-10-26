@@ -13,24 +13,30 @@ export async function PUT(request) {
       )
     }
 
-    const { name, email } = await request.json()
+    const { name, email, username, profileImage } = await request.json()
 
-    // Check if email is already taken by another user
+    // Check if email/username are already taken by another user
     if (email) {
       const existingUser = await prisma.user.findFirst({
         where: {
           email,
-          NOT: {
-            id: session.id
-          }
+          NOT: { id: session.id }
         }
       })
-
       if (existingUser) {
-        return NextResponse.json(
-          { error: 'Email already in use' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Email already in use' }, { status: 400 })
+      }
+    }
+
+    if (username) {
+      const existingUsername = await prisma.user.findFirst({
+        where: {
+          username,
+          NOT: { id: session.id }
+        }
+      }).catch(() => null)
+      if (existingUsername) {
+        return NextResponse.json({ error: 'Username already in use' }, { status: 400 })
       }
     }
 
@@ -39,7 +45,9 @@ export async function PUT(request) {
       where: { id: session.id },
       data: {
         ...(name && { name }),
-        ...(email && { email })
+        ...(email && { email }),
+        ...(username && { username }),
+        ...(profileImage && { profileImage }),
       }
     })
 

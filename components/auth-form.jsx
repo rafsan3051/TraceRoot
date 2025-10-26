@@ -15,7 +15,7 @@ export default function AuthForm() {
     email: '',
     password: '',
     name: '',
-    role: 'USER'
+    role: 'CONSUMER'
   })
 
   const handleSubmit = async (e) => {
@@ -61,21 +61,39 @@ export default function AuthForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {isRegister && (
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full p-2 rounded border bg-background"
-              disabled={isLoading}
-            />
-          </div>
+          <>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium mb-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full p-2 rounded border bg-background"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium mb-1">
+                Username (unique)
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username || ''}
+                onChange={handleChange}
+                required
+                className="w-full p-2 rounded border bg-background"
+                disabled={isLoading}
+              />
+            </div>
+          </>
         )}
 
         <div>
@@ -124,8 +142,10 @@ export default function AuthForm() {
               className="w-full p-2 rounded border bg-background"
               disabled={isLoading}
             >
-              <option value="USER">User</option>
+              <option value="CONSUMER">Consumer</option>
               <option value="FARMER">Farmer</option>
+              <option value="DISTRIBUTOR">Distributor</option>
+              <option value="RETAILER">Retailer</option>
             </select>
           </div>
         )}
@@ -140,6 +160,18 @@ export default function AuthForm() {
           {isLoading ? 'Processing...' : (isRegister ? 'Register' : 'Login')}
         </motion.button>
       </form>
+
+      {!isRegister && (
+        <div className="mt-3 text-right">
+          <button
+            onClick={() => router.push('/auth/forgot')}
+            className="text-sm text-primary hover:underline"
+            disabled={isLoading}
+          >
+            Forgot password?
+          </button>
+        </div>
+      )}
 
       <p className="mt-4 text-sm text-center">
         {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}

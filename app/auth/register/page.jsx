@@ -77,6 +77,17 @@ export default function RegisterPage() {
           </div>
 
           <div>
+            <label className="text-sm font-medium">Username (unique)</label>
+            <input
+              type="text"
+              required
+              className="mt-1 block w-full rounded-md border bg-background px-3 py-2"
+              value={formData.username || ''}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            />
+          </div>
+
+          <div>
             <label className="text-sm font-medium">Password</label>
             <input
               type="password"
@@ -97,6 +108,7 @@ export default function RegisterPage() {
               <option value="CONSUMER">Consumer</option>
               <option value="RETAILER">Retailer</option>
               <option value="FARMER">Farmer</option>
+              <option value="DISTRIBUTOR">Distributor</option>
             </select>
           </div>
 
@@ -129,7 +141,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm">
           Already have an account?{' '}
-          <Link href="/auth/login" className="text-primary hover:underline">
+          <Link href="/auth" className="text-primary hover:underline">
             Login
           </Link>
         </p>

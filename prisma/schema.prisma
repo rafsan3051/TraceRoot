@@ -17,16 +17,19 @@ enum Role {
 
 model User {
   id            String    @id @default(uuid())
-  name          String
+  name          String // Full name
+  username      String?  @unique // Username (unique); optional until migration applied
   email         String    @unique
   password      String
   verified      Boolean   @default(false)
   role          Role      @default(CONSUMER)
   phoneNumber   String?
   address       String?
+  profileImage  String?   // Avatar URL
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   products      Product[] // Only for farmers
+  passwordResetTokens PasswordResetToken[] // Password reset tokens
   
   @@map("users")
 }
@@ -64,4 +67,15 @@ model SupplyChainEvent {
   notes         String?  @db.Text
 
   @@map("supply_chain_events")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
 }
