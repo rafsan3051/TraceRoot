@@ -3,9 +3,16 @@ const bcrypt = require('bcryptjs')
 
 const prisma = new PrismaClient()
 
+// Load passwords from environment variables with fallback defaults (for development only)
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'admin123'
+const FARMER_PASSWORD = process.env.SEED_FARMER_PASSWORD || 'farmer123'
+const DISTRIBUTOR_PASSWORD = process.env.SEED_DISTRIBUTOR_PASSWORD || 'dist123'
+const RETAILER_PASSWORD = process.env.SEED_RETAILER_PASSWORD || 'retail123'
+const CONSUMER_PASSWORD = process.env.SEED_CONSUMER_PASSWORD || 'consumer123'
+
 async function seed() {
   try {
-    const adminPassword = await bcrypt.hash('admin123', 12)
+    const adminPassword = await bcrypt.hash(ADMIN_PASSWORD, 12)
     const admin = await prisma.user.upsert({
       where: { email: 'admin@traceroot.com' },
       update: { username: 'admin' },
@@ -29,7 +36,7 @@ async function seed() {
         create: {
           email: 'farmer1@example.com',
           username: 'farmer1',
-          password: await bcrypt.hash('farmer123', 12),
+          password: await bcrypt.hash(FARMER_PASSWORD, 12),
           name: 'John Smith',
           role: 'FARMER',
           verified: true,
@@ -41,7 +48,7 @@ async function seed() {
         create: {
           email: 'farmer2@example.com',
           username: 'farmer2',
-          password: await bcrypt.hash('farmer123', 12),
+          password: await bcrypt.hash(FARMER_PASSWORD, 12),
           name: 'Mary Johnson',
           role: 'FARMER',
           verified: true,
@@ -59,7 +66,7 @@ async function seed() {
         create: {
           email: 'dist1@example.com',
           username: 'dist1',
-          password: await bcrypt.hash('dist123', 12),
+          password: await bcrypt.hash(DISTRIBUTOR_PASSWORD, 12),
           name: 'ABC Distribution',
           role: 'DISTRIBUTOR',
           verified: true,
@@ -72,7 +79,7 @@ async function seed() {
         create: {
           email: 'dist2@example.com',
           username: 'dist2',
-          password: await bcrypt.hash('dist123', 12),
+          password: await bcrypt.hash(DISTRIBUTOR_PASSWORD, 12),
           name: 'XYZ Logistics',
           role: 'DISTRIBUTOR',
           verified: false,
@@ -85,7 +92,7 @@ async function seed() {
         create: {
           email: 'dist3@example.com',
           username: 'dist3',
-          password: await bcrypt.hash('dist123', 12),
+          password: await bcrypt.hash(DISTRIBUTOR_PASSWORD, 12),
           name: 'FastTrack Logistics',
           role: 'DISTRIBUTOR',
           verified: true,
@@ -98,7 +105,7 @@ async function seed() {
         create: {
           email: 'dist4@example.com',
           username: 'dist4',
-          password: await bcrypt.hash('dist123', 12),
+          password: await bcrypt.hash(DISTRIBUTOR_PASSWORD, 12),
           name: 'Global Supply Chain',
           role: 'DISTRIBUTOR',
           verified: true,
@@ -117,7 +124,7 @@ async function seed() {
         create: {
           email: 'retail1@example.com',
           username: 'retail1',
-          password: await bcrypt.hash('retail123', 12),
+          password: await bcrypt.hash(RETAILER_PASSWORD, 12),
           name: 'City Grocers',
           role: 'RETAILER',
           verified: true,
@@ -130,7 +137,7 @@ async function seed() {
         create: {
           email: 'retail2@example.com',
           username: 'retail2',
-          password: await bcrypt.hash('retail123', 12),
+          password: await bcrypt.hash(RETAILER_PASSWORD, 12),
           name: 'Fresh Foods Market',
           role: 'RETAILER',
           verified: true,
@@ -143,7 +150,7 @@ async function seed() {
         create: {
           email: 'retail3@example.com',
           username: 'retail3',
-          password: await bcrypt.hash('retail123', 12),
+          password: await bcrypt.hash(RETAILER_PASSWORD, 12),
           name: 'Organic Store',
           role: 'RETAILER',
           verified: true,
@@ -156,7 +163,7 @@ async function seed() {
         create: {
           email: 'retail4@example.com',
           username: 'retail4',
-          password: await bcrypt.hash('retail123', 12),
+          password: await bcrypt.hash(RETAILER_PASSWORD, 12),
           name: 'Village Market',
           role: 'RETAILER',
           verified: false,
@@ -175,7 +182,7 @@ async function seed() {
         create: {
           email: 'consumer1@example.com',
           username: 'consumer1',
-          password: await bcrypt.hash('consumer123', 12),
+          password: await bcrypt.hash(CONSUMER_PASSWORD, 12),
           name: 'Consumer One',
           role: 'CONSUMER',
           verified: true
@@ -187,7 +194,7 @@ async function seed() {
         create: {
           email: 'consumer2@example.com',
           username: 'consumer2',
-          password: await bcrypt.hash('consumer123', 12),
+          password: await bcrypt.hash(CONSUMER_PASSWORD, 12),
           name: 'Consumer Two',
           role: 'CONSUMER',
           verified: true
@@ -258,21 +265,19 @@ async function seed() {
     console.log('\nSeeding completed successfully!')
     console.log('\nAdmin Credentials:')
     console.log('Email: admin@traceroot.com')
-    console.log('Password: admin123')
+    console.log(`Password: ${ADMIN_PASSWORD}`)
     console.log('\nFarmer Credentials:')
     console.log('Email: farmer1@example.com')
-    console.log('Password: farmer123')
-  console.log('\nDistributor Credentials:')
+    console.log(`Password: ${FARMER_PASSWORD}`)
+    console.log('\nDistributor Credentials:')
     console.log('Email: dist1@example.com')
-    console.log('Password: dist123')
-  console.log('\nRetailer Credentials:')
-  console.log('Email: retail1@example.com | Username: retail1')
-  console.log('Password: retail123')
-  console.log('\nConsumer Credentials:')
-  console.log('Email: consumer1@example.com')
-  console.log('Password: consumer123')
-
-  } catch (error) {
+    console.log(`Password: ${DISTRIBUTOR_PASSWORD}`)
+    console.log('\nRetailer Credentials:')
+    console.log('Email: retail1@example.com | Username: retail1')
+    console.log(`Password: ${RETAILER_PASSWORD}`)
+    console.log('\nConsumer Credentials:')
+    console.log('Email: consumer1@example.com')
+    console.log(`Password: ${CONSUMER_PASSWORD}`)  } catch (error) {
     console.error('Seeding failed:', error)
     process.exit(1)
   } finally {
