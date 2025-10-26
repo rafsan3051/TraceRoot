@@ -50,7 +50,7 @@ export function AuthGuard({ children, requiredRole = null }) {
         className="flex flex-col items-center justify-center min-h-[60vh] space-y-4"
       >
         <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p className="text-muted-foreground">You don't have permission to access this page.</p>
+        <p className="text-muted-foreground">You don&apos;t have permission to access this page.</p>
         <Link
           href="/"
           className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
@@ -20,9 +21,10 @@ export default function RetailerDashboard() {
     } else if (user) {
       fetchDashboardData()
     }
-  }, [user, loading, router])
+  }, [user, loading, router, fetchDashboardData])
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
+
     try {
       const res = await fetch(`/api/users/${user.id}/activities`)
       const data = await res.json()
@@ -34,7 +36,7 @@ export default function RetailerDashboard() {
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [user])
 
   if (loading || loadingData) {
     return (

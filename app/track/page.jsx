@@ -178,7 +178,7 @@ export default function TrackPage() {
         transition={{ delay: 0.7 }}
         className="max-w-3xl mx-auto p-6 rounded-xl border bg-card/50 backdrop-blur"
       >
-        <h3 className="font-semibold mb-3">What you'll see:</h3>
+        <h3 className="font-semibold mb-3">What you&apos;ll see:</h3>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li className="flex items-start gap-2">
             <span className="text-blue-500 mt-0.5">✓</span>

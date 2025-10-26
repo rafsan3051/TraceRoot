@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
@@ -12,17 +13,7 @@ export default function DistributorDashboard() {
   const [events, setEvents] = useState([])
   const [loadingData, setLoadingData] = useState(true)
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth')
-    } else if (user && user.role !== 'DISTRIBUTOR') {
-      router.push('/')
-    } else if (user) {
-      fetchDashboardData()
-    }
-  }, [user, loading, router])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const res = await fetch(`/api/users/${user.id}/activities`)
       const data = await res.json()
@@ -34,7 +25,17 @@ export default function DistributorDashboard() {
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth')
+    } else if (user && user.role !== 'DISTRIBUTOR') {
+      router.push('/')
+    } else if (user) {
+      fetchDashboardData()
+    }
+  }, [user, loading, router, fetchDashboardData])
 
   if (loading || loadingData) {
     return (

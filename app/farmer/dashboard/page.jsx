@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
@@ -14,25 +14,13 @@ export default function FarmerDashboard() {
   const [products, setProducts] = useState([])
   const [loadingData, setLoadingData] = useState(true)
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth')
-    } else if (user && user.role !== 'FARMER') {
-      router.push('/')
-    } else if (user) {
-      fetchDashboardData()
-    }
-  }, [user, loading, router])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const res = await fetch('/api/product')
       const data = await res.json()
-      
       if (data.products) {
         const myProducts = data.products.filter(p => p.farmerId === user.id)
         setProducts(myProducts)
-        
         setStats({
           totalProducts: myProducts.length,
           totalValue: myProducts.reduce((sum, p) => sum + (parseFloat(p.price) || 0), 0),
@@ -47,7 +35,17 @@ export default function FarmerDashboard() {
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth')
+    } else if (user && user.role !== 'FARMER') {
+      router.push('/')
+    } else if (user) {
+      fetchDashboardData()
+    }
+  }, [user, loading, router, fetchDashboardData])
 
   if (loading || loadingData) {
     return (
@@ -113,7 +111,8 @@ export default function FarmerDashboard() {
           className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-700 dark:text-yellow-400 flex items-center gap-2"
         >
           <AlertCircle className="h-5 w-5" />
-          <span>Your account is pending verification. You'll be able to register products once approved.</span>
+          <span>Your account is pending verification. You&apos;ll be able to register products once approved.</span>
+
         </motion.div>
       )}
 
