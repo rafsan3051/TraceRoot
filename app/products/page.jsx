@@ -68,17 +68,19 @@ export default function ProductsPage() {
   )
 
   if (loading) {
+    const SupplyChainLoader = require('@/components/SupplyChainLoader').default
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-[400px] flex items-center justify-center">
+        <SupplyChainLoader label="Loading products" />
       </div>
     )
   }
 
     if (checkingAuth) {
+      const SupplyChainLoader = require('@/components/SupplyChainLoader').default
       return (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        <div className="min-h-[400px] flex items-center justify-center">
+          <SupplyChainLoader label="Checking access" />
         </div>
       )
     }

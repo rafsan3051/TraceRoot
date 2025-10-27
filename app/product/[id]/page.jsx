@@ -60,7 +60,7 @@ export default async function ProductPage({ params }) {
             <p className="text-sm sm:text-base text-muted-foreground">Product Details and History</p>
         </div>
           <div className="flex flex-col items-center sm:items-end space-y-2">
-            <QRCodeSVG value={product.qrCodeUrl} size={window.innerWidth < 640 ? 100 : 128} />
+            <QRCodeSVG value={product.qrCodeUrl} size={128} className="w-24 sm:w-32" />
             <p className="text-xs sm:text-sm text-muted-foreground">Scan to verify</p>
         </div>
       </div>

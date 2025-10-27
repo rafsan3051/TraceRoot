@@ -79,9 +79,10 @@ export default function TrackPage() {
   }
 
   if (checkingAuth) {
+    const SupplyChainLoader = require('@/components/SupplyChainLoader').default
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <SupplyChainLoader label="Checking authentication" />
       </div>
     )
   }
@@ -122,7 +123,7 @@ export default function TrackPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <motion.button
-              onClick={() => window.location.href = '/auth?redirect=/track'}
+              onClick={() => router.push('/auth?redirect=/track')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:opacity-90 transition-opacity"
@@ -131,7 +132,7 @@ export default function TrackPage() {
               Login
             </motion.button>
             <motion.button
-              onClick={() => window.location.href = '/auth/register?redirect=/track'}
+              onClick={() => router.push('/auth/register?redirect=/track')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium hover:opacity-90 transition-opacity"

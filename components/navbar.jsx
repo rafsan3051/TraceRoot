@@ -65,7 +65,23 @@ export function Navbar() {
             <ThemeToggle />
             {user ? (
               <div className="flex items-center space-x-4">
-                <Link href="/profile" className="text-sm font-medium hover:text-primary transition-colors">Profile</Link>
+                <Link href="/profile" className="group" title={user.name || 'Profile'}>
+                  {user.profileImage ? (
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-primary transition-all">
+                      <Image 
+                        src={user.profileImage} 
+                        alt={user.name || 'User'} 
+                        width={36}
+                        height={36}
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-transparent group-hover:ring-primary transition-all">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                </Link>
                 <button onClick={logout} className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors">Logout</button>
               </div>
             ) : (
@@ -91,7 +107,24 @@ export function Navbar() {
               <ThemeToggle />
               {user ? (
                 <>
-                  <Link href="/profile" className="block text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+                  <Link href="/profile" className="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                    {user.profileImage ? (
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden ring-2 ring-primary/20">
+                        <Image 
+                          src={user.profileImage} 
+                          alt={user.name || 'User'} 
+                          width={32}
+                          height={32}
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center text-white text-sm font-semibold ring-2 ring-primary/20">
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                    <span>{user.name || 'Profile'}</span>
+                  </Link>
                   <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="block w-full text-left text-sm font-medium text-red-500 hover:text-red-600 transition-colors">Logout</button>
                 </>
               ) : (

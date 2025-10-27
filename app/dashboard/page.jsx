@@ -29,8 +29,11 @@ export default function DashboardPage() {
           case 'RETAILER':
             router.push('/retailer/dashboard')
             break
+          case 'CONSUMER':
+            router.push('/consumer/dashboard')
+            break
           default:
-            // Default users go to profile
+            // Fallback to profile for any unknown roles
             router.push('/profile')
         }
       }
@@ -39,13 +42,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center"
-      >
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-lg text-muted-foreground">Redirecting to your dashboard...</p>
+      <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}>
+        {(() => { const SupplyChainLoader = require('@/components/SupplyChainLoader').default; return <SupplyChainLoader label="Redirecting to your dashboard" /> })()}
       </motion.div>
     </div>
   )

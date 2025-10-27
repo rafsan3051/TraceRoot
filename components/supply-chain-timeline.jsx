@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Package, Truck, Store, CheckCircle, MapPin, Calendar } from 'lucide-react'
+import { Package, Truck, Store, CheckCircle, BadgeCheck, MapPin, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 
 const eventIcons = {
@@ -17,17 +17,49 @@ const eventIcons = {
   default: MapPin
 }
 
-const eventColors = {
-  REGISTERED: 'blue',
-  HARVESTED: 'emerald',
-  PROCESSED: 'purple',
-  PICKED_UP: 'yellow',
-  IN_TRANSIT: 'orange',
-  DELIVERED: 'cyan',
-  RECEIVED: 'indigo',
-  IN_STOCK: 'teal',
-  SOLD: 'green',
-  default: 'gray'
+// Tailwind cannot generate classes from fully dynamic color tokens reliably.
+// Map each event to explicit gradient and shadow class tokens to ensure output.
+const eventStyles = {
+  REGISTERED: {
+    grad: 'from-emerald-500 to-emerald-600',
+    shadow: 'shadow-emerald-500/50',
+  },
+  HARVESTED: {
+    grad: 'from-green-500 to-green-600',
+    shadow: 'shadow-green-500/50',
+  },
+  PROCESSED: {
+    grad: 'from-purple-500 to-purple-600',
+    shadow: 'shadow-purple-500/50',
+  },
+  PICKED_UP: {
+    grad: 'from-yellow-500 to-yellow-600',
+    shadow: 'shadow-yellow-500/50',
+  },
+  IN_TRANSIT: {
+    grad: 'from-orange-500 to-orange-600',
+    shadow: 'shadow-orange-500/50',
+  },
+  DELIVERED: {
+    grad: 'from-cyan-500 to-cyan-600',
+    shadow: 'shadow-cyan-500/50',
+  },
+  RECEIVED: {
+    grad: 'from-indigo-500 to-indigo-600',
+    shadow: 'shadow-indigo-500/50',
+  },
+  IN_STOCK: {
+    grad: 'from-teal-500 to-teal-600',
+    shadow: 'shadow-teal-500/50',
+  },
+  SOLD: {
+    grad: 'from-blue-500 to-blue-600',
+    shadow: 'shadow-blue-500/50',
+  },
+  default: {
+    grad: 'from-gray-500 to-gray-600',
+    shadow: 'shadow-gray-500/50',
+  },
 }
 
 export function SupplyChainTimeline({ events, product }) {
@@ -47,15 +79,20 @@ export function SupplyChainTimeline({ events, product }) {
   ]
 
   return (
-    <div className="relative">
-      {/* Timeline line */}
-      <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500" />
+    <div className="relative pl-4">
+      {/* Timeline line - centered through icon circles */}
+      <div className="pointer-events-none">
+        <div className="absolute z-0 left-12 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-emerald-500" />
+        {/* Top/Bottom caps to avoid line extending beyond first/last icons */}
+        <div className="absolute z-0 left-12 top-0 h-12 w-1 -translate-x-[0.5px] bg-background" />
+        <div className="absolute z-0 left-12 bottom-0 h-12 w-1 -translate-x-[0.5px] bg-background" />
+      </div>
 
       {/* Events */}
-      <div className="space-y-8">
+      <div className="space-y-6">
         {allEvents.map((event, index) => {
           const Icon = eventIcons[event.eventType] || eventIcons.default
-          const color = eventColors[event.eventType] || eventColors.default
+          const style = eventStyles[event.eventType] || eventStyles.default
           const isLast = index === allEvents.length - 1
 
           return (
@@ -71,7 +108,7 @@ export function SupplyChainTimeline({ events, product }) {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: index * 0.1 + 0.2, type: 'spring' }}
-                className={`relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-${color}-500 to-${color}-600 shadow-lg shadow-${color}-500/50`}
+                className={`relative z-20 flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${style.grad} shadow-lg ${style.shadow}`}
               >
                 <Icon className="w-8 h-8 text-white" />
               </motion.div>
@@ -116,7 +153,7 @@ export function SupplyChainTimeline({ events, product }) {
                       initial={{ width: 0 }}
                       animate={{ width: `${((index + 1) / allEvents.length) * 100}%` }}
                       transition={{ delay: index * 0.1 + 0.5, duration: 0.5 }}
-                      className={`h-full bg-gradient-to-r from-${color}-500 to-${color}-600`}
+                      className={`h-full bg-gradient-to-r ${style.grad}`}
                     />
                   </div>
                 </div>
@@ -158,25 +195,36 @@ export function SupplyChainTimeline({ events, product }) {
         })}
       </div>
 
-      {/* Journey complete indicator */}
+      {/* Journey complete indicator as a final timeline row (icon outside the card) */}
       {allEvents.length > 0 && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ delay: allEvents.length * 0.1 + 0.5 }}
-          className="mt-8 p-6 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20"
+          className="relative mt-6 flex gap-6 items-start"
         >
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500">
-              <CheckCircle className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h4 className="font-bold text-lg">Journey Tracked</h4>
-              <p className="text-sm text-muted-foreground">
-                {allEvents.length} checkpoint{allEvents.length !== 1 ? 's' : ''} recorded on blockchain
-              </p>
-            </div>
-          </div>
+          {/* Left icon aligned with timeline */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring' }}
+            className="relative z-10 flex-shrink-0 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/40"
+          >
+            <BadgeCheck className="w-8 h-8 text-white" />
+          </motion.div>
+
+          {/* Completion card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex-1 p-6 rounded-xl border bg-card"
+          >
+            <h4 className="font-bold text-lg">Journey Tracked</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              {allEvents.length} checkpoint{allEvents.length !== 1 ? 's' : ''} recorded on blockchain
+            </p>
+          </motion.div>
         </motion.div>
       )}
     </div>
