@@ -7,7 +7,7 @@ export async function GET() {
     const session = await getSession()
     
     if (!session?.id) {
-      return NextResponse.json({ user: null })
+      return NextResponse.json({ user: null, authenticated: false })
     }
 
     const user = await prisma.user.findUnique({
@@ -15,14 +15,14 @@ export async function GET() {
     })
 
     if (!user) {
-      return NextResponse.json({ user: null })
+      return NextResponse.json({ user: null, authenticated: false })
     }
 
     // Return user data (excluding password)
     const { password: _, ...userData } = user
-    return NextResponse.json({ user: userData })
+    return NextResponse.json({ user: userData, authenticated: true })
   } catch (error) {
     console.error('Session check error:', error)
-    return NextResponse.json({ user: null })
+    return NextResponse.json({ user: null, authenticated: false })
   }
 }

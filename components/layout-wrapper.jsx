@@ -25,7 +25,7 @@ export default function LayoutWrapper({ children }) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <div className="h-16 border-b bg-background/80 backdrop-blur-sm" />
-        <main className="flex-1">{children}</main>
+          <main className="flex-1 w-full">{children}</main>
       </div>
     )
   }
@@ -33,7 +33,7 @@ export default function LayoutWrapper({ children }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main className="flex-1">{children}</main>
+        <main className="flex-1 w-full">{children}</main>
       <Footer />
     </div>
   )

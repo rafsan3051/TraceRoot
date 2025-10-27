@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '@/lib/auth/auth-context'
 
 export default function AuthForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { login: authLogin, register: authRegister } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
@@ -36,7 +37,10 @@ export default function AuthForm() {
       }
 
       toast.success(isRegister ? 'Registration successful!' : 'Welcome back!')
-      router.push('/')
+      
+      // Redirect to the original page or home
+      const redirect = searchParams.get('redirect') || '/'
+      router.push(redirect)
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -53,13 +57,13 @@ export default function AuthForm() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-md mx-auto p-6 bg-card rounded-lg shadow-lg border"
+      className="max-w-md mx-auto p-4 sm:p-6 bg-card rounded-lg shadow-lg border"
     >
-      <h1 className="text-2xl font-bold mb-6 text-center">
+      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">
         {isRegister ? 'Create Account' : 'Welcome Back'}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         {isRegister && (
           <>
             <div>
@@ -73,7 +77,7 @@ export default function AuthForm() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full p-2 rounded border bg-background"
+                className="w-full p-2 sm:p-2.5 rounded border bg-background text-sm sm:text-base"
                 disabled={isLoading}
               />
             </div>
@@ -89,7 +93,7 @@ export default function AuthForm() {
                 value={formData.username || ''}
                 onChange={handleChange}
                 required
-                className="w-full p-2 rounded border bg-background"
+                className="w-full p-2 sm:p-2.5 rounded border bg-background text-sm sm:text-base"
                 disabled={isLoading}
               />
             </div>
@@ -108,7 +112,7 @@ export default function AuthForm() {
             onChange={handleChange}
             required
             placeholder={isRegister ? "your@email.com" : "Email or username"}
-            className="w-full p-2 rounded border bg-background"
+            className="w-full p-2 sm:p-2.5 rounded border bg-background text-sm sm:text-base"
             disabled={isLoading}
           />
         </div>
@@ -124,7 +128,7 @@ export default function AuthForm() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full p-2 rounded border bg-background"
+            className="w-full p-2 sm:p-2.5 rounded border bg-background text-sm sm:text-base"
             disabled={isLoading}
           />
         </div>
@@ -139,7 +143,7 @@ export default function AuthForm() {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full p-2 rounded border bg-background"
+              className="w-full p-2 sm:p-2.5 rounded border bg-background text-sm sm:text-base"
               disabled={isLoading}
             >
               <option value="CONSUMER">Consumer</option>
@@ -154,7 +158,7 @@ export default function AuthForm() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
-          className="w-full py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+          className="w-full py-2.5 sm:py-3 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors text-sm sm:text-base font-medium"
           disabled={isLoading}
         >
           {isLoading ? 'Processing...' : (isRegister ? 'Register' : 'Login')}
@@ -165,7 +169,7 @@ export default function AuthForm() {
         <div className="mt-3 text-right">
           <button
             onClick={() => router.push('/auth/forgot')}
-            className="text-sm text-primary hover:underline"
+            className="text-xs sm:text-sm text-primary hover:underline"
             disabled={isLoading}
           >
             Forgot password?
@@ -173,11 +177,11 @@ export default function AuthForm() {
         </div>
       )}
 
-      <p className="mt-4 text-sm text-center">
+      <p className="mt-4 text-xs sm:text-sm text-center">
         {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
         <button
           onClick={() => setIsRegister(!isRegister)}
-          className="text-primary hover:underline"
+          className="text-primary hover:underline font-medium"
           disabled={isLoading}
         >
           {isRegister ? 'Login' : 'Register'}

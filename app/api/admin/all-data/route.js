@@ -49,7 +49,10 @@ export async function GET(request) {
         orderBy: {
           createdAt: 'desc'
         }
-      }),
+      }).then(products => products.map(p => ({
+        ...p,
+        price: p.price ? Number(p.price) : 0
+      }))),
       prisma.supplyChainEvent.findMany({
         include: {
           product: {

@@ -6,7 +6,7 @@ import { getSession } from '../../../lib/auth/auth-utils'
 export async function POST(request) {
   try {
     const data = await request.json()
-    const { name, origin, manufactureDate } = data
+    const { name, origin, manufactureDate, latitude, longitude, locationAccuracy } = data
 
     // Verify session and permissions
     const session = await getSession()
@@ -24,10 +24,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Only farmers can register products' }, { status: 403 })
     }
 
-    // Record to blockchain
+    // Record to blockchain with location data
     const blockchainTxId = await recordToBlockchain({
       type: 'PRODUCT_CREATION',
-      data: { name, origin, manufactureDate }
+      data: { 
+        name, 
+        origin, 
+        manufactureDate,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        locationAccuracy: locationAccuracy || null
+      }
     })
 
     // Create product in database
@@ -40,7 +47,10 @@ export async function POST(request) {
         qrCodeUrl: null, // Will be updated after creation
         farmerId: user.id,
         price: 0.00,
-        category: 'Uncategorized'
+        category: 'Uncategorized',
+        latitude: latitude || null,
+        longitude: longitude || null,
+        locationAccuracy: locationAccuracy || null
       }
     })
 
@@ -81,7 +91,13 @@ export async function GET() {
       }
     })
 
-    return NextResponse.json({ products })
+    // Convert Decimal to number for JSON serialization
+    const serializedProducts = products.map(product => ({
+      ...product,
+      price: product.price ? Number(product.price) : 0
+    }))
+
+    return NextResponse.json({ products: serializedProducts })
   } catch (error) {
     console.error('Error fetching products:', error)
     return NextResponse.json(

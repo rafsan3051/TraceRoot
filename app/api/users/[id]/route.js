@@ -4,6 +4,9 @@ import { getSession } from '@/lib/auth/auth-utils'
 
 export async function GET(request, { params }) {
   try {
+    // Await params in Next.js 15+
+    const resolvedParams = await params
+    
     const session = await getSession()
     
     if (!session?.id) {
@@ -25,7 +28,7 @@ export async function GET(request, { params }) {
     }
 
     // Only allow users to view their own profile or admins to view any profile
-    if (currentUser.role !== 'ADMIN' && currentUser.id !== params.id) {
+    if (currentUser.role !== 'ADMIN' && currentUser.id !== resolvedParams.id) {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
@@ -33,7 +36,7 @@ export async function GET(request, { params }) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: {
         id: true,
         name: true,

@@ -4,6 +4,9 @@ import { getSession } from '@/lib/auth/auth-utils'
 
 export async function GET(request, { params }) {
   try {
+    // Await params in Next.js 15+
+    const resolvedParams = await params
+    
     // Verify auth via cookie-based session
     const session = await getSession()
     if (!session?.id) {
@@ -11,12 +14,12 @@ export async function GET(request, { params }) {
     }
 
     // Only allow viewing own activities unless admin
-    if (session.role !== 'ADMIN' && session.id !== params.id) {
+    if (session.role !== 'ADMIN' && session.id !== resolvedParams.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       select: { role: true }
     })
 
@@ -31,13 +34,16 @@ export async function GET(request, { params }) {
       case 'FARMER':
         activities = {
           products: await prisma.product.findMany({
-            where: { farmerId: params.id },
+            where: { farmerId: resolvedParams.id },
             orderBy: { createdAt: 'desc' },
-          }),
+          }).then(products => products.map(p => ({
+            ...p,
+            price: p.price ? Number(p.price) : 0
+          }))),
           events: await prisma.supplyChainEvent.findMany({
             where: {
               product: {
-                farmerId: params.id
+                farmerId: resolvedParams.id
               }
             },
             orderBy: { timestamp: 'desc' },
@@ -56,9 +62,9 @@ export async function GET(request, { params }) {
         activities.events = await prisma.supplyChainEvent.findMany({
           where: {
             OR: [
-              { eventType: 'PICKED_UP', userId: params.id },
-              { eventType: 'IN_TRANSIT', userId: params.id },
-              { eventType: 'DELIVERED', userId: params.id }
+              { eventType: 'PICKED_UP', userId: resolvedParams.id },
+              { eventType: 'IN_TRANSIT', userId: resolvedParams.id },
+              { eventType: 'DELIVERED', userId: resolvedParams.id }
             ]
           },
           orderBy: { timestamp: 'desc' },
@@ -76,9 +82,9 @@ export async function GET(request, { params }) {
         activities.events = await prisma.supplyChainEvent.findMany({
           where: {
             OR: [
-              { eventType: 'RECEIVED', userId: params.id },
-              { eventType: 'IN_STOCK', userId: params.id },
-              { eventType: 'SOLD', userId: params.id }
+              { eventType: 'RECEIVED', userId: resolvedParams.id },
+              { eventType: 'IN_STOCK', userId: resolvedParams.id },
+              { eventType: 'SOLD', userId: resolvedParams.id }
             ]
           },
           orderBy: { timestamp: 'desc' },
@@ -96,7 +102,7 @@ export async function GET(request, { params }) {
         activities.events = await prisma.supplyChainEvent.findMany({
           where: {
             eventType: 'PURCHASED',
-            userId: params.id
+            userId: resolvedParams.id
           },
           orderBy: { timestamp: 'desc' },
           include: {

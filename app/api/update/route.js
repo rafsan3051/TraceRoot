@@ -1,16 +1,28 @@
 import { NextResponse } from 'next/server'
 import prisma from '../../../lib/prisma'
 import { recordToBlockchain } from '../../../lib/blockchain'
+import { getSession } from '../../../lib/auth/auth-utils'
 
 export async function POST(request) {
   try {
     const data = await request.json()
-    const { productId, eventType, location } = data
+    const { productId, eventType, location, latitude, longitude, locationAccuracy } = data
 
-    // Record to blockchain
+    // Get current user session
+    const session = await getSession()
+    const userId = session?.id || null
+
+    // Record to blockchain with location data
     const blockchainTxId = await recordToBlockchain({
       type: 'SUPPLY_CHAIN_EVENT',
-      data: { productId, eventType, location }
+      data: { 
+        productId, 
+        eventType, 
+        location,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        locationAccuracy: locationAccuracy || null
+      }
     })
 
     // Create event in database
@@ -19,7 +31,11 @@ export async function POST(request) {
         productId,
         eventType,
         location,
-        blockchainTxId
+        blockchainTxId,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        locationAccuracy: locationAccuracy || null,
+        userId
       },
       include: {
         product: true

@@ -4,11 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { QRCodeSVG as QRCode } from 'qrcode.react'
 import toast from 'react-hot-toast'
+import useGeolocation from '@/hooks/useGeolocation'
+import { MapPin, Loader2 } from 'lucide-react'
 
 export default function RegisterProduct() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [product, setProduct] = useState(null)
+  const { location, error: geoError, loading: geoLoading, getLocation } = useGeolocation()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,10 +30,24 @@ export default function RegisterProduct() {
         throw new Error('Your account is not verified yet. An admin must verify your account before registering products.')
       }
 
+      // Get current location
+      let geoData = location
+      if (!geoData) {
+        try {
+          geoData = await getLocation()
+        } catch (err) {
+          // Location is optional, continue without it
+          console.warn('Could not get location:', err)
+        }
+      }
+
       const formData = {
         name: e.target.name.value,
         origin: e.target.origin.value,
-        manufactureDate: e.target.manufactureDate.value
+        manufactureDate: e.target.manufactureDate.value,
+        latitude: geoData?.latitude,
+        longitude: geoData?.longitude,
+        locationAccuracy: geoData?.accuracy
       }
 
       const response = await fetch('/api/product', {
@@ -56,15 +73,53 @@ export default function RegisterProduct() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-2xl">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Register New Product</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">Register New Product</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Add a new product to the blockchain for tracking and verification.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        {/* Location Status Indicator */}
+        <div className="rounded-lg border p-3 sm:p-4 bg-muted/50">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-2">
+              <MapPin className={`h-5 w-5 flex-shrink-0 mt-0.5 sm:mt-0 ${location ? 'text-emerald-600' : 'text-muted-foreground'}`} />
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-sm">
+                  {location ? 'Location Captured' : 'Location Not Set'}
+                </p>
+                {location && (
+                  <p className="text-xs text-muted-foreground break-all">
+                    Lat: {location.latitude.toFixed(6)}, Lng: {location.longitude.toFixed(6)}
+                    {location.accuracy && ` (±${Math.round(location.accuracy)}m)`}
+                  </p>
+                )}
+                {geoError && (
+                  <p className="text-xs text-red-600">{geoError}</p>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={getLocation}
+              disabled={geoLoading}
+              className="px-3 py-1.5 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 whitespace-nowrap w-full sm:w-auto"
+            >
+              {geoLoading ? (
+                <span className="flex items-center justify-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Getting...
+                </span>
+              ) : (
+                location ? 'Refresh' : 'Get Location'
+              )}
+            </button>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
             Product Name
@@ -107,32 +162,32 @@ export default function RegisterProduct() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 p-2 rounded-md"
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 p-3 rounded-md text-sm sm:text-base font-medium"
         >
           {loading ? 'Registering...' : 'Register Product'}
         </button>
       </form>
 
       {product && (
-        <div className="border rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Product Registered Successfully</h2>
+        <div className="border rounded-lg p-4 sm:p-6 space-y-4 mt-6">
+          <h2 className="text-lg sm:text-xl font-semibold">Product Registered Successfully</h2>
           
           <div className="flex flex-col items-center space-y-4">
-            <QRCode value={product.qrCodeUrl} size={200} />
-            <p className="text-sm text-muted-foreground">
+            <QRCode value={product.qrCodeUrl} size={window.innerWidth < 640 ? 160 : 200} />
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
               Scan this QR code to view product details
             </p>
           </div>
 
-          <div className="space-y-2">
-            <p><strong>Product ID:</strong> {product.id}</p>
-            <p><strong>Blockchain Transaction:</strong> {product.blockchainTxId}</p>
-            <p><strong>QR Code URL:</strong> {product.qrCodeUrl}</p>
+          <div className="space-y-2 text-sm sm:text-base">
+            <p className="break-all"><strong>Product ID:</strong> {product.id}</p>
+            <p className="break-all"><strong>Blockchain Transaction:</strong> {product.blockchainTxId}</p>
+            <p className="break-all"><strong>QR Code URL:</strong> {product.qrCodeUrl}</p>
           </div>
 
           <button
             onClick={() => router.push(`/product/${product.id}`)}
-            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 p-2 rounded-md"
+            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 p-3 rounded-md text-sm sm:text-base font-medium"
           >
             View Product Details
           </button>

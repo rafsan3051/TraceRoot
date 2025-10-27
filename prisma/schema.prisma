@@ -50,6 +50,9 @@ model Product {
   description    String?           @db.Text
   category       String
   imageUrl       String?
+  latitude       Float?            // Geolocation: Latitude where product was registered
+  longitude      Float?            // Geolocation: Longitude where product was registered
+  locationAccuracy Float?          // Geolocation: Accuracy in meters
 
   @@map("products")
 }
@@ -65,6 +68,10 @@ model SupplyChainEvent {
   temperature    Float?   // For tracking storage conditions
   humidity      Float?   // For tracking storage conditions
   notes         String?  @db.Text
+  latitude       Float?   // Geolocation: Latitude where event occurred
+  longitude      Float?   // Geolocation: Longitude where event occurred
+  locationAccuracy Float? // Geolocation: Accuracy in meters
+  userId         String?  // User who created this event
 
   @@map("supply_chain_events")
 }

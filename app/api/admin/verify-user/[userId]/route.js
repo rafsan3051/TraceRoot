@@ -3,7 +3,9 @@ import prisma from '@/lib/prisma'
 
 export async function POST(request, { params }) {
   try {
-    const userId = params.userId
+    // Await params in Next.js 15+
+    const resolvedParams = await params
+    const userId = resolvedParams.userId
 
     const user = await prisma.user.update({
       where: { id: userId },
