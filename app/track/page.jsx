@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Search, Package, AlertCircle, ArrowRight, QrCode, Lock, UserPlus, LogIn } from 'lucide-react'
+import { Search, Package, AlertCircle, ArrowRight, QrCode, Lock, UserPlus, LogIn, MapPin, Eye } from 'lucide-react'
 
 export default function TrackPage() {
   const router = useRouter()
@@ -81,8 +82,153 @@ export default function TrackPage() {
   if (checkingAuth) {
     const SupplyChainLoader = require('@/components/SupplyChainLoader').default
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center" suppressHydrationWarning>
         <SupplyChainLoader label="Checking authentication" />
+      </div>
+    )
+  }
+
+  // Show beautiful landing page for non-authenticated users
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen" suppressHydrationWarning>
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20 px-4"
+        >
+          <div className="container mx-auto max-w-4xl text-center">
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="mb-6 inline-block"
+            >
+              <Search className="h-20 w-20 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            </motion.div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-blue-600">
+              Track & Verify Products
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Search for any product and see its complete journey through the supply chain. Verify authenticity with blockchain technology.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/auth"
+                className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-blue-600 text-white rounded-lg font-medium hover:opacity-90 transition shadow-lg"
+              >
+                <LogIn className="h-5 w-5 mr-2" />
+                Sign In to Track
+              </Link>
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center justify-center px-8 py-3 border-2 border-emerald-600 text-emerald-600 dark:text-emerald-400 rounded-lg font-medium hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition"
+              >
+                <UserPlus className="h-5 w-5 mr-2" />
+                Create Account
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Features Section */}
+        <div className="container mx-auto px-4 py-16 max-w-6xl">
+          <h2 className="text-3xl font-bold text-center mb-12">Powerful Tracking Features</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-center p-6 rounded-xl border bg-card hover:shadow-lg transition"
+            >
+              <QrCode className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">QR Code Scanning</h3>
+              <p className="text-muted-foreground">
+                Scan product QR codes to instantly view complete supply chain information.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-center p-6 rounded-xl border bg-card hover:shadow-lg transition"
+            >
+              <MapPin className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Real-Time Location</h3>
+              <p className="text-muted-foreground">
+                Track product movement with GPS coordinates and interactive maps.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-center p-6 rounded-xl border bg-card hover:shadow-lg transition"
+            >
+              <Eye className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Complete Transparency</h3>
+              <p className="text-muted-foreground">
+                View every event, timestamp, and actor in the product&apos;s journey.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* How It Works */}
+          <div className="mt-16">
+            <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 font-bold text-xl mb-4">
+                  1
+                </div>
+                <h3 className="font-semibold mb-2">Sign In</h3>
+                <p className="text-sm text-muted-foreground">Create a free account or sign in to access tracking features</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 font-bold text-xl mb-4">
+                  2
+                </div>
+                <h3 className="font-semibold mb-2">Search or Scan</h3>
+                <p className="text-sm text-muted-foreground">Enter product ID, name, or scan QR code</p>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 font-bold text-xl mb-4">
+                  3
+                </div>
+                <h3 className="font-semibold mb-2">View Journey</h3>
+                <p className="text-sm text-muted-foreground">See complete supply chain history with blockchain verification</p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mt-16 text-center p-8 rounded-2xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white"
+          >
+            <h3 className="text-2xl font-bold mb-4">Start Tracking Today</h3>
+            <p className="mb-6 text-emerald-50">Get instant access to powerful supply chain tracking tools</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center justify-center px-8 py-3 bg-white text-emerald-600 rounded-lg font-medium hover:bg-gray-100 transition shadow-lg"
+              >
+                Create Free Account
+              </Link>
+              <Link
+                href="/auth"
+                className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-white rounded-lg font-medium hover:bg-white/10 transition"
+              >
+                Sign In
+              </Link>
+            </div>
+          </motion.div>
+        </div>
       </div>
     )
   }

@@ -4,9 +4,12 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { QrCode, Truck, Search } from 'lucide-react'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 export default function Home() {
   const { user } = useAuth()
+  const { locale } = useLocale()
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -48,22 +51,22 @@ export default function Home() {
         className="space-y-6"
       >
         <motion.div 
-          className="text-center space-y-4"
+          className="text-center space-y-4 px-4"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">
-            Track Products with Blockchain
+          <h1 suppressHydrationWarning className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500 break-words px-2 leading-tight sm:leading-tight md:leading-tight lg:leading-tight py-2">
+            {t(locale, 'home.hero.title')}
           </h1>
-          <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-            Secure, transparent, and tamper-proof supply chain tracking system powered by blockchain technology.
+          <p suppressHydrationWarning className="mx-auto max-w-[90%] sm:max-w-[700px] text-muted-foreground text-base sm:text-lg md:text-xl px-2 leading-relaxed">
+            {t(locale, 'home.hero.subtitle')}
           </p>
         </motion.div>
 
         {user ? (
           <motion.div 
-            className="grid gap-4 md:grid-cols-3"
+            className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 px-4"
             variants={container}
             initial="hidden"
             animate="visible"
@@ -72,7 +75,7 @@ export default function Home() {
               <motion.div variants={item}>
                 <Link
                   href="/products/register"
-                  className="group relative block rounded-xl border p-8 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all"
+                  className="group relative block rounded-xl border p-6 sm:p-8 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all min-h-[180px]"
                 >
                   <div className="relative z-10">
                     <motion.div 
@@ -82,9 +85,9 @@ export default function Home() {
                     >
                       <QrCode className="h-6 w-6 text-blue-500" />
                     </motion.div>
-                    <h3 className="mb-2 font-semibold">Register Product</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Add new products and generate QR codes for tracking.
+                    <h3 className="mb-2 font-semibold text-base sm:text-lg break-words">{t(locale, 'home.actions.register.title')}</h3>
+                    <p className="text-sm text-muted-foreground break-words">
+                      {t(locale, 'home.actions.register.description')}
                     </p>
                   </div>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-emerald-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -96,7 +99,7 @@ export default function Home() {
               <motion.div variants={item}>
                 <Link
                   href="/update"
-                  className="group relative block rounded-xl border p-8 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all"
+                  className="group relative block rounded-xl border p-6 sm:p-8 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/20 transition-all min-h-[180px]"
                 >
                   <div className="relative z-10">
                     <motion.div 
@@ -106,9 +109,9 @@ export default function Home() {
                     >
                       <Truck className="h-6 w-6 text-emerald-500" />
                     </motion.div>
-                    <h3 className="mb-2 font-semibold">Update Status</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Record supply chain events and location updates.
+                    <h3 className="mb-2 font-semibold text-base sm:text-lg break-words">{t(locale, 'home.actions.track.title')}</h3>
+                    <p className="text-sm text-muted-foreground break-words">
+                      {t(locale, 'home.actions.track.description')}
                     </p>
                   </div>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/5 to-blue-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -119,7 +122,7 @@ export default function Home() {
             <motion.div variants={item}>
               <Link
                 href="/track"
-                className="group relative block rounded-xl border p-8 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all"
+                className="group relative block rounded-xl border p-6 sm:p-8 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition-all min-h-[180px]"
               >
                 <div className="relative z-10">
                   <motion.div 
@@ -129,9 +132,9 @@ export default function Home() {
                   >
                     <Search className="h-6 w-6 text-blue-500" />
                   </motion.div>
-                  <h3 className="mb-2 font-semibold">Verify Products</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Scan QR codes or enter product IDs to verify authenticity.
+                  <h3 className="mb-2 font-semibold text-base sm:text-lg break-words">{t(locale, 'home.actions.verify.title')}</h3>
+                  <p className="text-sm text-muted-foreground break-words">
+                    {t(locale, 'home.actions.verify.description')}
                   </p>
                 </div>
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/5 to-emerald-500/5 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -145,33 +148,33 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="max-w-2xl mx-auto space-y-6">
-              <div className="grid gap-4 md:grid-cols-3">
+            <div className="max-w-4xl mx-auto space-y-6 px-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <motion.div 
-                  className="rounded-xl border p-6 bg-card"
+                  className="rounded-xl border p-6 bg-card min-h-[140px] flex flex-col items-center justify-center text-center"
                   whileHover={{ y: -5, shadow: "lg" }}
                 >
                   <QrCode className="h-8 w-8 text-blue-500 mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">Register Products</h3>
-                  <p className="text-sm text-muted-foreground">Generate QR codes</p>
+                  <h3 className="font-semibold mb-2 break-words">{t(locale, 'home.features.register.title')}</h3>
+                  <p className="text-sm text-muted-foreground break-words">{t(locale, 'home.features.register.subtitle')}</p>
                 </motion.div>
                 <motion.div 
-                  className="rounded-xl border p-6 bg-card"
+                  className="rounded-xl border p-6 bg-card min-h-[140px] flex flex-col items-center justify-center text-center"
                   whileHover={{ y: -5, shadow: "lg" }}
                   transition={{ delay: 0.1 }}
                 >
                   <Truck className="h-8 w-8 text-emerald-500 mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">Track Movement</h3>
-                  <p className="text-sm text-muted-foreground">Monitor supply chain</p>
+                  <h3 className="font-semibold mb-2 break-words">{t(locale, 'home.features.track.title')}</h3>
+                  <p className="text-sm text-muted-foreground break-words">{t(locale, 'home.features.track.subtitle')}</p>
                 </motion.div>
                 <motion.div 
-                  className="rounded-xl border p-6 bg-card"
+                  className="rounded-xl border p-6 bg-card min-h-[140px] flex flex-col items-center justify-center text-center sm:col-span-2 lg:col-span-1"
                   whileHover={{ y: -5, shadow: "lg" }}
                   transition={{ delay: 0.2 }}
                 >
                   <Search className="h-8 w-8 text-blue-500 mx-auto mb-3" />
-                  <h3 className="font-semibold mb-2">Verify Authenticity</h3>
-                  <p className="text-sm text-muted-foreground">Scan QR codes</p>
+                  <h3 className="font-semibold mb-2 break-words">{t(locale, 'home.features.verify.title')}</h3>
+                  <p className="text-sm text-muted-foreground break-words">{t(locale, 'home.features.verify.subtitle')}</p>
                 </motion.div>
               </div>
               <motion.div
@@ -183,7 +186,7 @@ export default function Home() {
                   href="/auth"
                   className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-blue-500 to-emerald-500 px-8 py-3 text-sm font-medium text-white hover:opacity-90 transition-opacity shadow-lg"
                 >
-                  Get Started - Sign In →
+                  {t(locale, 'home.cta.getStarted')} →
                 </Link>
               </motion.div>
             </div>

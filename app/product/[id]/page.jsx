@@ -2,6 +2,7 @@ import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
 import { format } from 'date-fns'
 import QrCodeCard from '@/components/qr-code-card'
+import WatchButton from '@/components/watch-button'
 import { SupplyChainTimeline } from '@/components/supply-chain-timeline'
 import { SupplyChainMap } from '@/components/supply-chain-map'
 import LocationMap from '@/components/LocationMap'
@@ -55,12 +56,16 @@ export default async function ProductPage({ params }) {
   return (
       <div className="container mx-auto px-0 py-6 sm:py-8 max-w-4xl space-y-6 sm:space-y-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-        <div className="space-y-2">
+        <div className="space-y-2 flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
             <p className="text-sm sm:text-base text-muted-foreground">Product Details and History</p>
+            <div className="pt-2">
+              <WatchButton productId={product.id} compact={false} />
+            </div>
         </div>
           <QrCodeCard
             productId={product.id}
+            product={product}
             versionKey={(product.events?.[0]?.timestamp ?? product.updatedAt).toISOString?.() ?? String(product.updatedAt)}
             size={128}
           />

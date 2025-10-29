@@ -12,19 +12,10 @@ export default function RetailerDashboard() {
   const { user, loading } = useAuth()
   const [events, setEvents] = useState([])
   const [loadingData, setLoadingData] = useState(true)
-  
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth')
-    } else if (user && user.role !== 'RETAILER') {
-      router.push('/')
-    } else if (user) {
-      fetchDashboardData()
-    }
-  }, [user, loading, router, fetchDashboardData])
 
   const fetchDashboardData = useCallback(async () => {
-
+    if (!user?.id) return
+    
     try {
       const res = await fetch(`/api/users/${user.id}/activities`)
       const data = await res.json()
@@ -36,11 +27,21 @@ export default function RetailerDashboard() {
     } finally {
       setLoadingData(false)
     }
-  }, [user])
+  }, [user?.id])
+  
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth')
+    } else if (user && user.role !== 'RETAILER') {
+      router.push('/')
+    } else if (user) {
+      fetchDashboardData()
+    }
+  }, [user, loading, router, fetchDashboardData])
 
   if (loading || loadingData) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[400px]" suppressHydrationWarning>
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
       </div>
     )
@@ -77,7 +78,7 @@ export default function RetailerDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" suppressHydrationWarning>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

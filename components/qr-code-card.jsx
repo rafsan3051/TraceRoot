@@ -1,9 +1,10 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { QRCodeCanvas } from 'qrcode.react'
-import { Download, Copy } from 'lucide-react'
+import { Download, Copy, Printer } from 'lucide-react'
+import { buildSecureQRValue } from '@/lib/qr/qr-token'
 
 /**
  * QrCodeCard
@@ -13,41 +14,76 @@ import { Download, Copy } from 'lucide-react'
  * Props:
  * - productId: string
  * - versionKey: string | number (e.g., latest event ISO timestamp or updatedAt)
+ * - product?: object (for signed tokens)
  * - size?: number (px)
+ * - printMode?: boolean (use high-res, high ECC)
  */
-export default function QrCodeCard({ productId, versionKey, size = 128 }) {
+export default function QrCodeCard({ 
+  productId, 
+  versionKey, 
+  product,
+  size = 128,
+  printMode = false 
+}) {
   const { user } = useAuth()
   const codeRef = useRef(null)
+  const [qrValue, setQrValue] = useState('')
+  const [isGenerating, setIsGenerating] = useState(true)
 
-  const qrValue = useMemo(() => {
-    const isLocalHost = (url) => {
+  // Generate signed QR value
+  useEffect(() => {
+    async function generateQR() {
       try {
-        const { hostname } = new URL(url)
-        return (
-          hostname === 'localhost' ||
-          hostname === '127.0.0.1' ||
-          hostname === '0.0.0.0' ||
-          hostname.endsWith('.local')
-        )
-      } catch {
-        return false
+        if (product) {
+          // Use signed token if product data available
+          const base = typeof window !== 'undefined' 
+            ? window.location.origin 
+            : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+          
+          const signedValue = await buildSecureQRValue(base, product, versionKey)
+          setQrValue(signedValue)
+        } else {
+          // Fallback to simple URL
+          const isLocalHost = (url) => {
+            try {
+              const { hostname } = new URL(url)
+              return (
+                hostname === 'localhost' ||
+                hostname === '127.0.0.1' ||
+                hostname === '0.0.0.0' ||
+                hostname.endsWith('.local')
+              )
+            } catch {
+              return false
+            }
+          }
+
+          const envBase = process.env.NEXT_PUBLIC_APP_URL
+          const browserBase = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined
+
+          const base = envBase && !isLocalHost(envBase)
+            ? envBase
+            : (browserBase && !isLocalHost(browserBase) ? browserBase : (envBase || browserBase || 'http://localhost:3000'))
+
+          const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
+          setQrValue(`${base}/verify/${productId}?v=${v}`)
+        }
+      } catch (error) {
+        console.error('Failed to generate QR:', error)
+        // Fallback to simple URL on error
+        const base = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'
+        const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
+        setQrValue(`${base}/verify/${productId}?v=${v}`)
+      } finally {
+        setIsGenerating(false)
       }
     }
 
-    const envBase = process.env.NEXT_PUBLIC_APP_URL
-    const browserBase = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined
+    generateQR()
+  }, [productId, versionKey, product])
 
-    // Priority:
-    // 1) If env base exists and is NOT localhost, prefer it (works when dev uses localhost but QR must be public via ngrok)
-    // 2) Else if browser origin exists and is NOT localhost, use it (when you browse via ngrok/LAN IP)
-    // 3) Else fallback to whichever is available, else default localhost
-    const base = envBase && !isLocalHost(envBase)
-      ? envBase
-      : (browserBase && !isLocalHost(browserBase) ? browserBase : (envBase || browserBase || 'http://localhost:3000'))
-
-    const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
-    return `${base}/product/${productId}?v=${v}`
-  }, [productId, versionKey])
+  const qrSize = printMode ? 512 : size
+  const eccLevel = printMode ? 'H' : 'M'
 
   const canDownload = useMemo(() => {
     const role = user?.role
@@ -71,6 +107,17 @@ export default function QrCodeCard({ productId, versionKey, size = 128 }) {
     }
   }
 
+  if (isGenerating) {
+    return (
+      <div className="flex flex-col items-center sm:items-end space-y-2">
+        <div className="p-2 rounded-md bg-white shadow-sm ring-1 ring-black/5 w-32 h-32 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+        </div>
+        <p className="text-xs text-muted-foreground">Generating secure QR...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col items-center sm:items-end space-y-2">
       <div
@@ -80,14 +127,17 @@ export default function QrCodeCard({ productId, versionKey, size = 128 }) {
       >
         <QRCodeCanvas
           value={qrValue}
-          size={size}
+          size={qrSize}
+          level={eccLevel}
           includeMargin={true}
           bgColor="#ffffff"
           fgColor="#111827"
-          className={size < 128 ? 'w-24 h-24' : 'w-32 h-32'}
+          className={qrSize < 128 ? 'w-24 h-24' : qrSize > 256 ? 'w-full h-full' : 'w-32 h-32'}
         />
       </div>
-      <p className="text-xs sm:text-sm text-muted-foreground">Scan to verify</p>
+      <p className="text-xs sm:text-sm text-muted-foreground">
+        Scan to verify {product ? '🔒 Signed' : ''}
+      </p>
       <div className="flex items-center gap-2">
         <button
           type="button"

@@ -4,21 +4,24 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Globe } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '../lib/auth/auth-context'
+import { useLocale } from '../lib/i18n/locale-context'
+import { t } from '../lib/i18n/translations'
 import { ThemeToggle } from './theme-toggle'
 
 export function Navbar() {
   const { user, logout } = useAuth()
+  const { locale, setLocale } = useLocale()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const menuItems = [
-    { href: '/', label: 'Home' },
-    { href: '/products', label: 'Products' },
-    { href: '/track', label: 'Track' },
-     ...(user ? [{ href: '/dashboard', label: 'Dashboard' }] : []),
+    { href: '/', label: t(locale, 'nav.home') },
+    { href: '/products', label: t(locale, 'nav.products') },
+    { href: '/track', label: t(locale, 'nav.track') },
+     ...(user ? [{ href: '/dashboard', label: t(locale, 'nav.dashboard') }] : []),
   ]
 
   const navVariants = {
@@ -52,16 +55,27 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                suppressHydrationWarning
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   pathname === item.href ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
-                {item.label}
+                <span suppressHydrationWarning>{item.label}</span>
               </Link>
             ))}
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
+            {/* Language Selector */}
+            <button
+              onClick={() => setLocale(locale === 'en-BD' ? 'bn-BD' : 'en-BD')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border bg-background hover:bg-muted transition text-sm"
+              title="Switch Language"
+            >
+              <Globe className="h-4 w-4" />
+              <span className="font-medium">{locale === 'en-BD' ? 'EN' : 'বাং'}</span>
+            </button>
+            
             <ThemeToggle />
             {user ? (
               <div className="flex items-center space-x-4">
@@ -82,10 +96,10 @@ export function Navbar() {
                     </div>
                   )}
                 </Link>
-                <button onClick={logout} className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors">Logout</button>
+                <button onClick={logout} className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors">{t(locale, 'auth.logout')}</button>
               </div>
             ) : (
-              <Link href="/auth" className="text-sm font-medium hover:text-primary transition-colors">Login / Register</Link>
+              <Link href="/auth" className="text-sm font-medium hover:text-primary transition-colors">{t(locale, 'auth.loginRegister')}</Link>
             )}
           </div>
 
@@ -123,12 +137,12 @@ export function Navbar() {
                         {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                       </div>
                     )}
-                    <span>{user.name || 'Profile'}</span>
+                    <span>{user.name || t(locale, 'auth.profile')}</span>
                   </Link>
-                  <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="block w-full text-left text-sm font-medium text-red-500 hover:text-red-600 transition-colors">Logout</button>
+                  <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="block w-full text-left text-sm font-medium text-red-500 hover:text-red-600 transition-colors">{t(locale, 'auth.logout')}</button>
                 </>
               ) : (
-                <Link href="/auth" className="block text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>Login / Register</Link>
+                <Link href="/auth" className="block text-sm font-medium hover:text-primary transition-colors" onClick={() => setMobileMenuOpen(false)}>{t(locale, 'auth.loginRegister')}</Link>
               )}
             </div>
           </motion.div>
