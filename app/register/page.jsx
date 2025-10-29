@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { QRCodeSVG as QRCode } from 'qrcode.react'
+import QrCodeCard from '@/components/qr-code-card'
 import toast from 'react-hot-toast'
 import useGeolocation from '@/hooks/useGeolocation'
 import { MapPin, Loader2 } from 'lucide-react'
@@ -173,10 +173,11 @@ export default function RegisterProduct() {
           <h2 className="text-lg sm:text-xl font-semibold">Product Registered Successfully</h2>
           
           <div className="flex flex-col items-center space-y-4">
-            <QRCode value={product.qrCodeUrl} size={window.innerWidth < 640 ? 160 : 200} />
-            <p className="text-xs sm:text-sm text-muted-foreground text-center">
-              Scan this QR code to view product details
-            </p>
+            <QrCodeCard
+              productId={product.id}
+              versionKey={product.createdAt || Date.now()}
+              size={window.innerWidth < 640 ? 160 : 200}
+            />
           </div>
 
           <div className="space-y-2 text-sm sm:text-base">

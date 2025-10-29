@@ -187,7 +187,7 @@ export default function ProductsPage() {
                           <div className="flex items-center justify-between">
                             <span className="text-muted-foreground">Price</span>
                             <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                              ${parseFloat(product.price).toFixed(2)}
+                              {new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT', maximumFractionDigits: 2 }).format(Number(product.price))}
                             </span>
                           </div>
                         )}

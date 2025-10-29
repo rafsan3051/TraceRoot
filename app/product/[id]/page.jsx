@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
 import { format } from 'date-fns'
-import { QRCodeSVG } from 'qrcode.react'
+import QrCodeCard from '@/components/qr-code-card'
 import { SupplyChainTimeline } from '@/components/supply-chain-timeline'
 import { SupplyChainMap } from '@/components/supply-chain-map'
 import LocationMap from '@/components/LocationMap'
@@ -53,16 +53,17 @@ export default async function ProductPage({ params }) {
   }
 
   return (
-      <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl space-y-6 sm:space-y-8">
+      <div className="container mx-auto px-0 py-6 sm:py-8 max-w-4xl space-y-6 sm:space-y-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
             <p className="text-sm sm:text-base text-muted-foreground">Product Details and History</p>
         </div>
-          <div className="flex flex-col items-center sm:items-end space-y-2">
-            <QRCodeSVG value={product.qrCodeUrl} size={128} className="w-24 sm:w-32" />
-            <p className="text-xs sm:text-sm text-muted-foreground">Scan to verify</p>
-        </div>
+          <QrCodeCard
+            productId={product.id}
+            versionKey={(product.events?.[0]?.timestamp ?? product.updatedAt).toISOString?.() ?? String(product.updatedAt)}
+            size={128}
+          />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
