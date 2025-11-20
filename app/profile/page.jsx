@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { User, Mail, Shield, Calendar, Edit2, Save, X } from 'lucide-react'
+import { formatDate } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { user, loading, updateProfile } = useAuth()
@@ -171,9 +172,7 @@ export default function ProfilePage() {
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                   <span className="text-muted-foreground">Joined:</span>
-                  <span className="ml-auto font-medium">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </span>
+                  <span className="ml-auto font-medium">{formatDate(user.createdAt)}</span>
                 </div>
               </div>
             </div>

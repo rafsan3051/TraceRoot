@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
 import { Truck, Package, MapPin, Clock, TrendingUp } from 'lucide-react'
+import { formatDate } from '@/lib/utils'
 
 export default function DistributorDashboard() {
   const router = useRouter()
@@ -169,9 +170,7 @@ export default function DistributorDashboard() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold">{event.eventType.replace('_', ' ')}</h3>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(event.timestamp).toLocaleDateString()}
-                      </span>
+                      <span className="text-xs text-muted-foreground">{formatDate(event.timestamp)}</span>
                     </div>
                     <p className="text-sm text-muted-foreground">{event.product?.name}</p>
                     <p className="text-sm text-muted-foreground mt-1">

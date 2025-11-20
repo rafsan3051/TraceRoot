@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
 import { Package, TrendingUp, AlertCircle, Plus, Eye, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
+import { formatDate } from '@/lib/utils'
 
 export default function FarmerDashboard() {
   const router = useRouter()
@@ -194,7 +195,7 @@ export default function FarmerDashboard() {
                       <span>•</span>
                       <span>${parseFloat(product.price || 0).toFixed(2)}</span>
                       <span>•</span>
-                      <span>{new Date(product.createdAt).toLocaleDateString()}</span>
+                      <span>{formatDate(product.createdAt)}</span>
                     </div>
                   </div>
                   <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>

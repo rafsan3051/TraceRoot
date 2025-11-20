@@ -7,6 +7,7 @@ import { Package, Search, Eye, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { useLocale } from '@/lib/i18n/locale-context'
 import { t } from '@/lib/i18n/translations'
+import { formatDate } from '@/lib/utils'
 
 
 export default function ProductsPage() {
@@ -289,9 +290,7 @@ export default function ProductsPage() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground">Registered</span>
-                          <span className="font-medium">
-                            {new Date(product.createdAt).toLocaleDateString()}
-                          </span>
+                          <span className="font-medium">{formatDate(product.createdAt)}</span>
                         </div>
                         {product.price > 0 && (
                           <div className="flex items-center justify-between">

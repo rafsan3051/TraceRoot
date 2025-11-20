@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
 import { Package, ShoppingCart, TrendingUp, Store, ShoppingBag } from 'lucide-react'
+import { formatDate } from '@/lib/utils'
 
 export default function RetailerDashboard() {
   const router = useRouter()
@@ -172,7 +173,7 @@ export default function RetailerDashboard() {
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold">{event.eventType.replace('_', ' ')}</h3>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(event.timestamp).toLocaleDateString()}
+                        {formatDate(event.timestamp)}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">{event.product?.name}</p>

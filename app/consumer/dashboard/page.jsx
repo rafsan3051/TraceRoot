@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, Package, ShoppingBag, TrendingUp, Clock, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
+import { formatDate } from '@/lib/utils'
 
 export default function ConsumerDashboard() {
   const { user, loading } = useAuth()
@@ -178,7 +179,7 @@ export default function ConsumerDashboard() {
                   <p className="text-sm text-muted-foreground mb-2">Origin: {product.origin}</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
-                    <span>{new Date(product.createdAt).toLocaleDateString()}</span>
+                    <span>{formatDate(product.createdAt)}</span>
                   </div>
                 </div>
               </Link>

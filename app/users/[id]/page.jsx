@@ -1,12 +1,13 @@
- 'use client'
+'use client'
 
-import { use, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
+import { useParams } from 'next/navigation'
 import { formatDateTime, formatDate } from '@/lib/utils'
 
-export default function UserProfilePage({ params }) {
-  const resolvedParams = use(params)
+export default function UserProfilePage() {
+  const resolvedParams = useParams()
   const { user: currentUser } = useAuth()
   const [user, setUser] = useState(null)
   const [activities, setActivities] = useState(null)
