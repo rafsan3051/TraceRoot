@@ -3,6 +3,7 @@
 import { use, useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
+import { formatDateTime, formatDate } from '@/lib/utils'
 
 export default function UserProfilePage({ params }) {
   const resolvedParams = use(params)
@@ -141,7 +142,7 @@ export default function UserProfilePage({ params }) {
               </div>
               <div>
                 <dt className="text-sm text-muted-foreground">Member Since</dt>
-                <dd className="text-lg">{new Date(user.createdAt).toLocaleDateString()}</dd>
+                <dd className="text-lg">{formatDate(user.createdAt)}</dd>
               </div>
             </dl>
           </div>
@@ -168,7 +169,7 @@ export default function UserProfilePage({ params }) {
                         <tr key={product.id} className="border-t">
                           <td className="py-4">{product.name}</td>
                           <td className="py-4">{product.origin}</td>
-                          <td className="py-4">{new Date(product.createdAt).toLocaleDateString()}</td>
+                          <td className="py-4">{formatDate(product.createdAt)}</td>
                           <td className="py-4">
                             <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Active</span>
                           </td>
@@ -192,7 +193,7 @@ export default function UserProfilePage({ params }) {
                   <div className="flex-1">
                     <p className="font-medium">{event.eventType}</p>
                     <p className="text-sm text-muted-foreground">{event.product?.name} - {event.location}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{new Date(event.timestamp).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{formatDateTime(event.timestamp)}</p>
                   </div>
                 </div>
               ))}

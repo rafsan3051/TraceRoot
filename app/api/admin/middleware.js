@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/auth-utils'
+import prisma from '@/lib/prisma'
 
 export async function adminMiddleware(request) {
   try {

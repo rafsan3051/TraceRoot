@@ -5,12 +5,14 @@ import { useAuth } from '@/lib/auth/auth-context'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Users, Package, AlertCircle, CheckCircle2, List, Search } from 'lucide-react'
+import { formatDateTime } from '@/lib/utils'
 
 export default function AdminDashboard() {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('users')
   const [searchTerm, setSearchTerm] = useState('')
   const [data, setData] = useState({ users: [], products: [], events: [], stats: {} })
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     fetchAllData()
@@ -18,12 +20,18 @@ export default function AdminDashboard() {
 
   const fetchAllData = async () => {
     try {
+      setError(null)
       const res = await fetch('/api/admin/all-data')
-      if (!res.ok) throw new Error('Failed to load admin data')
+      if (!res.ok) {
+        const problem = await res.json().catch(() => ({}))
+        setError(problem.error || 'Failed to load admin data')
+        return
+      }
       const jsonData = await res.json()
       setData(jsonData)
     } catch (err) {
       console.error(err)
+      setError('Network error while loading admin data')
     }
   }
 
@@ -59,6 +67,11 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          {error && (
+            <div className="col-span-full rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+              {error}
+            </div>
+          )}
           <motion.div whileHover={{ scale: 1.02 }} className="rounded-xl border p-4 sm:p-6 bg-card">
             <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500 mb-3 sm:mb-4" />
             <h3 className="text-xl sm:text-2xl font-bold">{data.stats?.totalUsers || 0}</h3>
@@ -167,7 +180,7 @@ export default function AdminDashboard() {
                       <td className="py-4"><Link href={`/products/${e.product?.id}`} className="hover:underline">{e.product?.name}</Link></td>
                       <td className="py-4">{e.eventType}</td>
                       <td className="py-4">{e.location}</td>
-                      <td className="py-4">{new Date(e.timestamp).toLocaleString()}</td>
+                      <td className="py-4">{formatDateTime(e.timestamp)}</td>
                       <td className="py-4"><Link href={`/products/${e.product?.id}`} className="text-sm text-blue-500 hover:text-blue-700">View Product</Link></td>
                     </tr>
                   ))}
