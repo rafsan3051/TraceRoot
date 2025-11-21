@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { verifyAuth } from './lib/auth/auth-utils'
-import { getSecurityHeaders } from './lib/security/headers'
 
 // Define paths at the top level for better performance
 const PUBLIC_PATHS = ['/', '/auth', '/auth/register', '/products', '/track']
@@ -27,46 +26,12 @@ export async function proxy(request) {
 
     // Allow public paths
     if (PUBLIC_PATHS.includes(pathname)) {
-      const response = NextResponse.next()
-      
-      // Apply security headers
-      const isDev = process.env.NODE_ENV === 'development'
-      const headers = getSecurityHeaders(isDev)
-      
-      Object.entries(headers).forEach(([key, value]) => {
-        // Skip HSTS in development
-        if (isDev && key === 'Strict-Transport-Security') return
-        // Relax CSP in development
-        if (isDev && key === 'Content-Security-Policy') {
-          response.headers.set(key, value.replace('upgrade-insecure-requests', ''))
-          return
-        }
-        response.headers.set(key, value)
-      })
-      
-      return response
+      return NextResponse.next()
     }
 
     // Allow public path prefixes (e.g., /verify/*)
     if (PUBLIC_PATH_PREFIXES.some(prefix => pathname.startsWith(prefix))) {
-      const response = NextResponse.next()
-      
-      // Apply security headers
-      const isDev = process.env.NODE_ENV === 'development'
-      const headers = getSecurityHeaders(isDev)
-      
-      Object.entries(headers).forEach(([key, value]) => {
-        // Skip HSTS in development
-        if (isDev && key === 'Strict-Transport-Security') return
-        // Relax CSP in development
-        if (isDev && key === 'Content-Security-Policy') {
-          response.headers.set(key, value.replace('upgrade-insecure-requests', ''))
-          return
-        }
-        response.headers.set(key, value)
-      })
-      
-      return response
+      return NextResponse.next()
     }
 
     // Verify authentication
@@ -99,24 +64,7 @@ export async function proxy(request) {
       }
     }
 
-    const response = NextResponse.next()
-    
-    // Apply security headers to authenticated routes too
-    const isDev = process.env.NODE_ENV === 'development'
-    const headers = getSecurityHeaders(isDev)
-    
-    Object.entries(headers).forEach(([key, value]) => {
-      // Skip HSTS in development
-      if (isDev && key === 'Strict-Transport-Security') return
-      // Relax CSP in development
-      if (isDev && key === 'Content-Security-Policy') {
-        response.headers.set(key, value.replace('upgrade-insecure-requests', ''))
-        return
-      }
-      response.headers.set(key, value)
-    })
-    
-    return response
+    return NextResponse.next()
   } catch (error) {
     console.error('Middleware error:', error)
     return NextResponse.redirect(new URL('/auth', request.url))
