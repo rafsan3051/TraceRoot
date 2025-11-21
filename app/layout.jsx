@@ -6,6 +6,7 @@ import { ThemeProvider } from '../components/theme-provider'
 import { AuthProvider } from '../lib/auth/auth-context'
 import { LocaleProvider } from '../lib/i18n/locale-context'
 import LayoutWrapper from '../components/layout-wrapper'
+import ConfigurationCheck from '../components/configuration-check'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -54,24 +55,26 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
-          <LocaleProvider>
-            <AuthProvider>
-              <LayoutWrapper>
-                {children}
-              </LayoutWrapper>
-              <Toaster 
-                position="top-center"
-                toastOptions={{
-                  duration: 5000,
-                  style: {
-                    background: 'var(--background)',
-                    color: 'var(--foreground)',
-                    border: '1px solid var(--border)'
-                  }
-                }}
-              />
-            </AuthProvider>
-          </LocaleProvider>
+          <ConfigurationCheck>
+            <LocaleProvider>
+              <AuthProvider>
+                <LayoutWrapper>
+                  {children}
+                </LayoutWrapper>
+                <Toaster 
+                  position="top-center"
+                  toastOptions={{
+                    duration: 5000,
+                    style: {
+                      background: 'var(--background)',
+                      color: 'var(--foreground)',
+                      border: '1px solid var(--border)'
+                    }
+                  }}
+                />
+              </AuthProvider>
+            </LocaleProvider>
+          </ConfigurationCheck>
         </ThemeProvider>
         <Analytics />
       </body>
