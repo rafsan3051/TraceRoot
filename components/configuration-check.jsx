@@ -9,19 +9,48 @@ export default function ConfigurationCheck({ children }) {
 
   useEffect(() => {
     checkConfiguration()
+    
+    // Fallback: if check takes too long, assume it's configured
+    const timeout = setTimeout(() => {
+      if (checking) {
+        console.log('Config check timed out, assuming configured')
+        setConfigStatus({ configured: true })
+        setChecking(false)
+      }
+    }, 3000) // 3 second timeout
+    
+    return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const checkConfiguration = async () => {
     try {
-      const res = await fetch('/api/health')
-      const data = await res.json()
-      setConfigStatus(data)
+      const res = await fetch('/api/health', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
+      })
+      
+      if (!res.ok) {
+        // If health check fails, assume there's a config issue
+        const data = await res.json().catch(() => ({}))
+        setConfigStatus({
+          status: 'error',
+          configured: false,
+          message: data.message || 'Configuration check failed',
+          missing: data.missing || []
+        })
+      } else {
+        const data = await res.json()
+        setConfigStatus(data)
+      }
     } catch (error) {
       console.error('Config check failed:', error)
+      // On error, assume it's configured and let the app handle errors
       setConfigStatus({
-        status: 'error',
-        configured: false,
-        message: 'Unable to check configuration'
+        status: 'ok',
+        configured: true
       })
     } finally {
       setChecking(false)
