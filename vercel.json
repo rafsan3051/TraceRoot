@@ -1,0 +1,18 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_APP_URL": "https://trace-root.vercel.app"
+  },
+  "build": {
+    "env": {
+      "DATABASE_URL": "@database_url",
+      "JWT_SECRET": "@jwt_secret",
+      "USE_REAL_BLOCKCHAIN": "@use_real_blockchain",
+      "NEXT_PUBLIC_APP_URL": "@next_public_app_url"
+    }
+  }
+}
