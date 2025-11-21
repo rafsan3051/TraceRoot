@@ -11,19 +11,6 @@ const nextConfig = {
     // This is for demonstration only - type checking is recommended in production
     ignoreBuildErrors: true,
   },
-  // Allow ngrok and external origins
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-        ],
-      },
-    ]
-  },
   // Using default JSX transformation
   compiler: {
     styledComponents: false,
