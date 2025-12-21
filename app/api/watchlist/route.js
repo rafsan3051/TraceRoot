@@ -56,13 +56,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Product ID required' }, { status: 400 })
     }
 
-    // Check if product exists
+    // Check if product exists and is not hidden
     const product = await prisma.product.findUnique({
       where: { id: productId },
     })
 
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
+
+    if (product.hidden) {
+      return NextResponse.json({ error: 'Cannot watch hidden products' }, { status: 403 })
     }
 
     // Create or update watch

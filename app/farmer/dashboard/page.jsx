@@ -147,7 +147,7 @@ export default function FarmerDashboard() {
               <TrendingUp className="h-6 w-6 text-emerald-500" />
             </div>
           </div>
-          <h3 className="text-2xl font-bold">${stats?.totalValue.toFixed(2) || '0.00'}</h3>
+          <h3 className="text-2xl font-bold">৳{stats?.totalValue.toFixed(2) || '0.00'}</h3>
           <p className="text-sm text-muted-foreground">Total Value</p>
         </motion.div>
 
@@ -193,7 +193,7 @@ export default function FarmerDashboard() {
                     <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                       <span>{product.origin}</span>
                       <span>•</span>
-                      <span>${parseFloat(product.price || 0).toFixed(2)}</span>
+                      <span>৳{parseFloat(product.price || 0).toFixed(2)}</span>
                       <span>•</span>
                       <span>{formatDate(product.createdAt)}</span>
                     </div>

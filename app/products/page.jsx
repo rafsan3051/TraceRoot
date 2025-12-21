@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Package, Search, Eye, MapPin } from 'lucide-react'
 import Link from 'next/link'
@@ -18,6 +18,7 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     fetchProducts()
@@ -41,7 +42,9 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/product')
+      const includeHidden = searchParams?.get('hidden') === '1'
+      const url = includeHidden ? '/api/product?includeHidden=1' : '/api/product'
+      const res = await fetch(url)
       const data = await res.json()
       if (data.products) {
         setProducts(data.products)
@@ -261,9 +264,15 @@ export default function ProductsPage() {
                   <div className="p-3 rounded-lg bg-blue-500/10">
                     <Package className="h-6 w-6 text-blue-500" />
                   </div>
-                  <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
-                    Active
-                  </span>
+                  {product.hidden ? (
+                    <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20">
+                      Hidden
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20">
+                      Active
+                    </span>
+                  )}
                 </div>
 
                 <div>

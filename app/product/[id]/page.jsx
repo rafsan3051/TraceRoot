@@ -3,10 +3,13 @@ import { notFound, redirect } from 'next/navigation'
 import { format } from 'date-fns'
 import QrCodeCard from '@/components/qr-code-card'
 import WatchButton from '@/components/watch-button'
+import DeleteProductButton from '@/components/delete-product-button'
+import UnhideProductButton from '@/components/unhide-product-button'
 import { SupplyChainTimeline } from '@/components/supply-chain-timeline'
 import { SupplyChainMap } from '@/components/supply-chain-map'
 import LocationMap from '@/components/LocationMap'
 import { getSession } from '@/lib/auth/auth-utils'
+import PriceHistory from '@/components/price-history'
 
 async function getProduct(id) {
   const product = await prisma.product.findUnique({
@@ -24,10 +27,21 @@ async function getProduct(id) {
     notFound()
   }
 
-  // Convert Decimal to number for Client Component compatibility
+  // Convert Decimal to number and serialize dates for Client Component compatibility
   return {
     ...product,
-    price: product.price ? Number(product.price) : 0
+    price: product.price ? Number(product.price) : 0,
+    createdAt: product.createdAt?.toISOString?.() ?? String(product.createdAt),
+    updatedAt: product.updatedAt?.toISOString?.() ?? String(product.updatedAt),
+    manufactureDate: product.manufactureDate?.toISOString?.() ?? String(product.manufactureDate),
+    events: product.events?.map(event => ({
+      ...event,
+      // Ensure all props to client components are primitives
+      id: event.id?.toString?.() ?? String(event.id),
+      productId: event.productId?.toString?.() ?? String(event.productId),
+      timestamp: event.timestamp?.toISOString?.() ?? String(event.timestamp),
+      createdAt: event.createdAt?.toISOString?.() ?? String(event.createdAt)
+    })) ?? []
   }
 }
 
@@ -59,14 +73,20 @@ export default async function ProductPage({ params }) {
         <div className="space-y-2 flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
             <p className="text-sm sm:text-base text-muted-foreground">Product Details and History</p>
-            <div className="pt-2">
+            <div className="pt-2 space-y-2">
               <WatchButton productId={product.id} compact={false} />
+              <div className="pt-2 sm:pt-0">
+                {product.hidden ? (
+                  <UnhideProductButton productId={product.id} />
+                ) : (
+                  <DeleteProductButton productId={product.id} farmerId={String(product.farmerId)} />
+                )}
+              </div>
             </div>
         </div>
           <QrCodeCard
             productId={product.id}
-            product={product}
-            versionKey={(product.events?.[0]?.timestamp ?? product.updatedAt).toISOString?.() ?? String(product.updatedAt)}
+            versionKey={product.updatedAt}
             size={128}
           />
       </div>
@@ -96,6 +116,11 @@ export default async function ProductPage({ params }) {
               <dd className="text-sm font-mono">{product.blockchainTxId}</dd>
             </div>
           </dl>
+
+          {/* Price History (on-chain, append-only) */}
+          <div className="mt-6">
+            <PriceHistory productId={product.id} canEdit={session?.role && session.role !== 'CONSUMER'} />
+          </div>
 
           {/* Registration Location */}
           {product.latitude && product.longitude && (
@@ -148,12 +173,21 @@ export default async function ProductPage({ params }) {
       <div className="space-y-6">
         <div className="border-t pt-8">
           <h2 className="text-2xl font-bold mb-6">Supply Chain Journey</h2>
-          <SupplyChainTimeline events={product.events} product={product} />
+          <SupplyChainTimeline 
+            events={product.events}
+            productOrigin={product.origin}
+            productCreatedAt={product.createdAt}
+            productBlockchainTxId={product.blockchainTxId}
+          />
         </div>
         
         <div className="border-t pt-8">
           <h2 className="text-2xl font-bold mb-6">Journey Map</h2>
-          <SupplyChainMap events={product.events} product={product} />
+          <SupplyChainMap 
+            events={product.events}
+            productOrigin={product.origin}
+            productCreatedAt={product.createdAt}
+          />
         </div>
       </div>
     </div>

@@ -14,14 +14,12 @@ import { buildSecureQRValue } from '@/lib/qr/qr-token'
  * Props:
  * - productId: string
  * - versionKey: string | number (e.g., latest event ISO timestamp or updatedAt)
- * - product?: object (for signed tokens)
  * - size?: number (px)
  * - printMode?: boolean (use high-res, high ECC)
  */
 export default function QrCodeCard({ 
   productId, 
   versionKey, 
-  product,
   size = 128,
   printMode = false 
 }) {
@@ -34,40 +32,30 @@ export default function QrCodeCard({
   useEffect(() => {
     async function generateQR() {
       try {
-        if (product) {
-          // Use signed token if product data available
-          const base = typeof window !== 'undefined' 
-            ? window.location.origin 
-            : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-          
-          const signedValue = await buildSecureQRValue(base, product, versionKey)
-          setQrValue(signedValue)
-        } else {
-          // Fallback to simple URL
-          const isLocalHost = (url) => {
-            try {
-              const { hostname } = new URL(url)
-              return (
-                hostname === 'localhost' ||
-                hostname === '127.0.0.1' ||
-                hostname === '0.0.0.0' ||
-                hostname.endsWith('.local')
-              )
-            } catch {
-              return false
-            }
+        // Fallback to simple URL (no signed token without product data)
+        const isLocalHost = (url) => {
+          try {
+            const { hostname } = new URL(url)
+            return (
+              hostname === 'localhost' ||
+              hostname === '127.0.0.1' ||
+              hostname === '0.0.0.0' ||
+              hostname.endsWith('.local')
+            )
+          } catch {
+            return false
           }
-
-          const envBase = process.env.NEXT_PUBLIC_APP_URL
-          const browserBase = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined
-
-          const base = envBase && !isLocalHost(envBase)
-            ? envBase
-            : (browserBase && !isLocalHost(browserBase) ? browserBase : (envBase || browserBase || 'http://localhost:3000'))
-
-          const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
-          setQrValue(`${base}/verify/${productId}?v=${v}`)
         }
+
+        const envBase = process.env.NEXT_PUBLIC_APP_URL
+        const browserBase = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined
+
+        const base = envBase && !isLocalHost(envBase)
+          ? envBase
+          : (browserBase && !isLocalHost(browserBase) ? browserBase : (envBase || browserBase || 'http://localhost:3000'))
+
+        const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
+        setQrValue(`${base}/verify/${productId}?v=${v}`)
       } catch (error) {
         console.error('Failed to generate QR:', error)
         // Fallback to simple URL on error
@@ -80,7 +68,7 @@ export default function QrCodeCard({
     }
 
     generateQR()
-  }, [productId, versionKey, product])
+  }, [productId, versionKey])
 
   const qrSize = printMode ? 512 : size
   const eccLevel = printMode ? 'H' : 'M'
@@ -136,7 +124,7 @@ export default function QrCodeCard({
         />
       </div>
       <p className="text-xs sm:text-sm text-muted-foreground">
-        Scan to verify {product ? '🔒 Signed' : ''}
+        Scan to verify
       </p>
       <div className="flex items-center gap-2">
         <button

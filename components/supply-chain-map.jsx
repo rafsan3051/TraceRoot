@@ -13,16 +13,18 @@ const locationColors = [
   'from-indigo-500 to-blue-500',
 ]
 
-export function SupplyChainMap({ events, product }) {
-  const sortedEvents = [...events].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
+  // Ensure events is an array
+  const safeEvents = Array.isArray(events) ? events : []
+  const sortedEvents = [...safeEvents].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
   
   // Combine product origin with events
   const locations = [
     {
       id: 'origin',
-      location: product.origin,
+      location: productOrigin,
       eventType: 'REGISTERED',
-      timestamp: product.createdAt,
+      timestamp: productCreatedAt,
       isOrigin: true
     },
     ...sortedEvents.map(e => ({

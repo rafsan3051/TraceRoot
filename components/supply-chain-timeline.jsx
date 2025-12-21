@@ -62,17 +62,19 @@ const eventStyles = {
   },
 }
 
-export function SupplyChainTimeline({ events, product }) {
-  const sortedEvents = [...events].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, productBlockchainTxId }) {
+  // Ensure events is an array
+  const safeEvents = Array.isArray(events) ? events : []
+  const sortedEvents = [...safeEvents].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
   
   // Add product registration as first event if not in events
   const allEvents = [
     {
       id: 'registration',
       eventType: 'REGISTERED',
-      location: product.origin,
-      timestamp: product.createdAt,
-      blockchainTxId: product.blockchainTxId,
+      location: productOrigin,
+      timestamp: productCreatedAt,
+      blockchainTxId: productBlockchainTxId,
       isRegistration: true
     },
     ...sortedEvents

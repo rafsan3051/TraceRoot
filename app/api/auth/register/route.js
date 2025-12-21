@@ -18,19 +18,7 @@ export async function POST(request) {
 
     const safeRole = allowedRoles.has(requestedRole) ? requestedRole : 'CONSUMER'
     
-    // Check if email already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: userData.email }
-    })
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'Email already registered' },
-        { status: 400 }
-      )
-    }
-
-    // Validate uniqueness
+    // Validate uniqueness (single check to avoid race condition)
     const [emailExists, usernameExists] = await Promise.all([
       prisma.user.findUnique({ where: { email: userData.email } }),
       userData.username ? prisma.user.findUnique({ where: { username: userData.username } }) : null,
@@ -47,18 +35,30 @@ export async function POST(request) {
     const hashedPassword = await hashPassword(userData.password)
 
     // Create user (whitelist fields and sanitize role)
-    const user = await prisma.user.create({
-      data: {
-        name: userData.name,
-        username: userData.username || null,
-        email: userData.email,
-        password: hashedPassword,
-        role: safeRole,
-        phoneNumber: userData.phoneNumber || null,
-        address: userData.address || null,
-        profileImage: userData.profileImage || null,
+    // Wrap in try-catch to handle unique constraint violations
+    let user
+    try {
+      user = await prisma.user.create({
+        data: {
+          name: userData.name,
+          username: userData.username || null,
+          email: userData.email,
+          password: hashedPassword,
+          role: safeRole,
+          phoneNumber: userData.phoneNumber || null,
+          address: userData.address || null,
+          profileImage: userData.profileImage || null,
+        }
+      })
+    } catch (createError) {
+      // Handle unique constraint violation (race condition)
+      if (createError.code === 11000 || createError.message?.includes('unique')) {
+        return NextResponse.json({ 
+          error: 'Email or username already exists' 
+        }, { status: 400 })
       }
-    })
+      throw createError
+    }
 
     // Create JWT token
     const token = await createToken({

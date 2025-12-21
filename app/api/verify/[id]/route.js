@@ -13,9 +13,19 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request, { params }) {
   try {
+    // Await params for Next.js 15+
+    const resolvedParams = await params
+    
     // Rate limiting
     const clientIP = getClientIP(request)
-    const rateLimit = checkRateLimit(clientIP)
+    let rateLimit
+    try {
+      rateLimit = checkRateLimit(clientIP)
+    } catch (rateLimitError) {
+      console.error('Rate limit check failed:', rateLimitError)
+      // Continue without rate limiting if it fails
+      rateLimit = { allowed: true }
+    }
 
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -32,7 +42,7 @@ export async function GET(request, { params }) {
       )
     }
 
-    const { id } = params
+    const { id } = resolvedParams
     const { searchParams } = new URL(request.url)
     const token = searchParams.get('t')
 

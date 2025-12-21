@@ -6,7 +6,18 @@ import { getSession } from '../../../lib/auth/auth-utils'
 export async function POST(request) {
   try {
     const data = await request.json()
-    const { name, origin, manufactureDate, latitude, longitude, locationAccuracy } = data
+    const { name, origin, manufactureDate, latitude, longitude, locationAccuracy, price, category, description } = data
+
+    // Input validation
+    if (!name || !name.trim()) {
+      return NextResponse.json({ error: 'Product name is required' }, { status: 400 })
+    }
+    if (!origin || !origin.trim()) {
+      return NextResponse.json({ error: 'Product origin is required' }, { status: 400 })
+    }
+    if (!manufactureDate) {
+      return NextResponse.json({ error: 'Manufacture date is required' }, { status: 400 })
+    }
 
     // Verify session and permissions
     const session = await getSession()
@@ -46,8 +57,8 @@ export async function POST(request) {
         blockchainTxId,
         qrCodeUrl: null, // Will be updated after creation
         farmerId: user.id,
-        price: 0.00,
-        category: 'Uncategorized',
+        price: price ? Number(price) : 0,
+        category: category || 'Uncategorized',
         latitude: latitude || null,
         longitude: longitude || null,
         locationAccuracy: locationAccuracy || null
@@ -76,9 +87,29 @@ export async function POST(request) {
   }
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const url = new URL(request.url)
+    const includeHiddenParam = url.searchParams.get('includeHidden')
+    const includeHidden = includeHiddenParam === '1' || includeHiddenParam === 'true'
+
+    let where = { hidden: { $ne: true } }
+
+    if (includeHidden) {
+      // Only admins can view hidden products list
+      const session = await getSession()
+      if (!session?.id) {
+        return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+      }
+      const user = await prisma.user.findUnique({ where: { id: session.id } })
+      if (user?.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Admin access required to view hidden products' }, { status: 403 })
+      }
+      where = {} // Include all products, hidden and visible
+    }
+
     const products = await prisma.product.findMany({
+      where,
       include: {
         events: {
           orderBy: {

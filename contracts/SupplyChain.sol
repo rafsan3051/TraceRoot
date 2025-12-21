@@ -18,11 +18,24 @@ contract SupplyChain {
         uint256 timestamp;
     }
     
+    struct PriceRecord {
+        uint256 price;
+        address actor;
+        string notes;
+        uint256 timestamp;
+    }
+    
     // Mapping from product ID to array of events
     mapping(string => Event[]) public productEvents;
     
     // Mapping to track product ownership
     mapping(string => address) public productOwner;
+    
+    // Mapping from product ID to array of price changes (append-only)
+    mapping(string => PriceRecord[]) public priceHistory;
+    
+    // Latest price per product ID (0 if unset)
+    mapping(string => uint256) public latestPrice;
     
     // Events
     event ProductCreated(
@@ -51,6 +64,14 @@ contract SupplyChain {
     event ProductVerified(
         string indexed productId,
         address indexed verifiedBy,
+        uint256 timestamp
+    );
+    
+    event PriceUpdated(
+        string indexed productId,
+        uint256 oldPrice,
+        uint256 newPrice,
+        address indexed updatedBy,
         uint256 timestamp
     );
     
@@ -144,6 +165,30 @@ contract SupplyChain {
     }
     
     /**
+     * @dev Update price for a product (append-only). Only current owner can update.
+     */
+    function updatePrice(
+        string memory _productId,
+        uint256 _newPrice,
+        string memory _notes
+    ) public {
+        require(productOwner[_productId] != address(0), "Product does not exist");
+        require(productOwner[_productId] == msg.sender, "Not the owner");
+        
+        uint256 old = latestPrice[_productId];
+        PriceRecord memory rec = PriceRecord({
+            price: _newPrice,
+            actor: msg.sender,
+            notes: _notes,
+            timestamp: block.timestamp
+        });
+        priceHistory[_productId].push(rec);
+        latestPrice[_productId] = _newPrice;
+        
+        emit PriceUpdated(_productId, old, _newPrice, msg.sender, block.timestamp);
+    }
+    
+    /**
      * @dev Get product history
      */
     function getProductHistory(string memory _productId) 
@@ -163,6 +208,28 @@ contract SupplyChain {
         returns (address) 
     {
         return productOwner[_productId];
+    }
+    
+    /**
+     * @dev Get latest price for a product (0 if never set)
+     */
+    function getLatestPrice(string memory _productId)
+        public
+        view
+        returns (uint256)
+    {
+        return latestPrice[_productId];
+    }
+    
+    /**
+     * @dev Get the full price history for a product
+     */
+    function getPriceHistory(string memory _productId)
+        public
+        view
+        returns (PriceRecord[] memory)
+    {
+        return priceHistory[_productId];
     }
     
     /**
