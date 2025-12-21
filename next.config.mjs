@@ -24,18 +24,8 @@ const nextConfig = {
       },
     ],
   },
-  // Turbopack configuration (Next.js 16+)
-  turbopack: {
-    root: path.resolve(process.cwd()),
-    resolveAlias: {
-      '@': path.resolve(process.cwd()),
-      ...(USE_REAL_BLOCKCHAIN
-        ? {}
-        : { ethers: 'lib/shims/ethers-shim.js' }
-      ),
-    },
-    resolveExtensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-  },
+  // Empty turbopack config to use defaults but avoid symlink issues
+  turbopack: {},
   webpack: (config, { isServer }) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
