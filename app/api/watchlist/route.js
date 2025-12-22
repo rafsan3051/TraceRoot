@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db/prisma'
+import prisma from '@/lib/prisma'
 import { verifyAuth } from '@/lib/auth/verify-auth'
 
 export const dynamic = 'force-dynamic'

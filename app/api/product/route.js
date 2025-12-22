@@ -15,9 +15,17 @@ export async function POST(request) {
     if (!origin || !origin.trim()) {
       return NextResponse.json({ error: 'Product origin is required' }, { status: 400 })
     }
-    if (!manufactureDate) {
-      return NextResponse.json({ error: 'Manufacture date is required' }, { status: 400 })
-    }
+      if (!manufactureDate) {
+        return NextResponse.json({ error: 'Manufacture date is required' }, { status: 400 })
+      }
+      const manufactureDateObj = new Date(manufactureDate)
+      if (isNaN(manufactureDateObj.getTime())) {
+        return NextResponse.json({ error: 'Invalid manufacture date' }, { status: 400 })
+      }
+      const priceNum = price != null && price !== '' ? Number(price) : 0
+      if (!Number.isFinite(priceNum) || priceNum < 0) {
+        return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
+      }
 
     // Verify session and permissions
     const session = await getSession()
@@ -41,7 +49,7 @@ export async function POST(request) {
       data: { 
         name, 
         origin, 
-        manufactureDate,
+          manufactureDate: manufactureDateObj,
         latitude: latitude || null,
         longitude: longitude || null,
         locationAccuracy: locationAccuracy || null
@@ -53,12 +61,13 @@ export async function POST(request) {
       data: {
         name,
         origin,
-        manufactureDate: new Date(manufactureDate),
+          manufactureDate: manufactureDateObj,
         blockchainTxId,
         qrCodeUrl: null, // Will be updated after creation
         farmerId: user.id,
-        price: price ? Number(price) : 0,
+          price: priceNum,
         category: category || 'Uncategorized',
+          description: description || '',
         latitude: latitude || null,
         longitude: longitude || null,
         locationAccuracy: locationAccuracy || null
