@@ -112,7 +112,7 @@ export default function VerifyPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Category</p>
-                <p className="font-semibold">{product.category}</p>
+                <p className="font-semibold">{product.category || 'N/A'}</p>
               </div>
             </div>
 
@@ -133,7 +133,9 @@ export default function VerifyPage() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Producer</p>
                 <p className="font-semibold">{product.creator?.name || 'N/A'}</p>
-                <p className="text-xs text-gray-500">{product.creator?.role}</p>
+                {product.creator?.role && (
+                  <p className="text-xs text-gray-500">{product.creator.role}</p>
+                )}
               </div>
             </div>
 
@@ -148,21 +150,52 @@ export default function VerifyPage() {
                 </p>
               </div>
             </div>
+
+            {product.manufactureDate && (
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Manufactured</p>
+                  <p className="font-semibold">
+                    {format(new Date(product.manufactureDate), 'PPP')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {product.price > 0 && (
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-emerald-100 dark:bg-emerald-900 rounded-lg">
+                  <Package className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Price</p>
+                  <p className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    {new Intl.NumberFormat('en-BD', { style: 'currency', currency: 'BDT', maximumFractionDigits: 2 }).format(product.price)}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
-          {product.description && (
+          {product.blockchainTxId && (
             <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Description</p>
-              <p className="text-gray-800 dark:text-gray-200">{product.description}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Blockchain Reference</p>
+              <p className="font-mono text-xs text-gray-700 dark:text-gray-300 break-all bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                {product.blockchainTxId}
+              </p>
             </div>
           )}
 
-          {product.status && (
+          {product.latitude && product.longitude && (
             <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Current Status</p>
-              <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
-                {product.status}
-              </span>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Registration Location</p>
+              <p className="text-gray-800 dark:text-gray-200">
+                📍 {product.latitude.toFixed(6)}, {product.longitude.toFixed(6)}
+                {product.locationAccuracy && ` (±${Math.round(product.locationAccuracy)}m)`}
+              </p>
             </div>
           )}
         </div>

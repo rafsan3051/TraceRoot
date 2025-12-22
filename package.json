@@ -22,12 +22,12 @@
     "ganache": "ganache --port 8545 --networkId 1337"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.721.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@prisma/client": "^5.10.0",
-    "@aws-sdk/client-s3": "^3.721.0",
-    "@vercel/blob": "^0.26.0",
     "@vercel/analytics": "1.2.2",
+    "@vercel/blob": "^0.26.0",
     "bcryptjs": "2.4.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -52,7 +52,11 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcryptjs": "2.4.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
@@ -61,6 +65,8 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "^16.1.0",
     "hardhat": "^2.26.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.7.2"
