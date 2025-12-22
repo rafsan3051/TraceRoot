@@ -247,20 +247,7 @@ export default function VerifyPage() {
               </div>
             </div>
           )
-        )} 
-              href={`/auth?redirect=/product/${product.id}`}
-              className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
-            >
-              Login
-            </a>
-            <a 
-              href={`/auth/register?redirect=/product/${product.id}`}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 transition border-2 border-white"
-            >
-              Register
-            </a>
-          </div>
-        </div>
+        )}
 
         {/* Footer */}
         <div className="text-center mt-8 text-sm text-gray-600 dark:text-gray-400">
