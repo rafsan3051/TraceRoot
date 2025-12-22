@@ -5,9 +5,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db/prisma'
-import { checkRateLimit, getClientIP } from '@/lib/api/rate-limit'
-import { verifyQRToken } from '@/lib/qr/qr-token'
+import prisma from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,148 +13,79 @@ export async function GET(request, { params }) {
   try {
     // Await params for Next.js 15+
     const resolvedParams = await params
-    
-    // Rate limiting
-    const clientIP = getClientIP(request)
-    let rateLimit
-    try {
-      rateLimit = checkRateLimit(clientIP)
-    } catch (rateLimitError) {
-      console.error('Rate limit check failed:', rateLimitError)
-      // Continue without rate limiting if it fails
-      rateLimit = { allowed: true }
-    }
-
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        {
-          status: 429,
-          headers: {
-            'X-RateLimit-Limit': '30',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
-            'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
-          },
-        }
-      )
-    }
-
     const { id } = resolvedParams
-    const { searchParams } = new URL(request.url)
-    const token = searchParams.get('t')
 
-    // Optional: verify token if provided
-    if (token) {
-      try {
-        const payload = await verifyQRToken(token)
-        if (payload.productId !== id) {
-          return NextResponse.json(
-            { error: 'Token does not match product ID' },
-            { status: 403 }
-          )
-        }
-      } catch (error) {
-        // Token invalid but continue - allows URL to work even after token expires
-        console.warn('QR token verification failed:', error.message)
-      }
-    }
+    console.log('🔍 Verify API called for product ID:', id)
 
-    // Fetch product with minimal info
+    // Fetch product with includes
     const product = await prisma.product.findUnique({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        category: true,
-        origin: true,
-        createdAt: true,
-        updatedAt: true,
-        manufactureDate: true,
-        blockchainTxId: true,
-        latitude: true,
-        longitude: true,
-        locationAccuracy: true,
-        price: true,
-        events: {
-          select: {
-            id: true,
-            eventType: true,
-            timestamp: true,
-            location: true,
-            latitude: true,
-            longitude: true,
-            locationAccuracy: true,
-            blockchainTxId: true,
-          },
-          orderBy: { timestamp: 'desc' },
-          take: 10, // Last 10 events only
-        },
-        farmer: {
-          select: {
-            name: true,
-            role: true,
-          },
-        },
-      },
+      include: {
+        farmer: true,
+        events: true
+      }
     })
+
+    console.log('📦 Product found:', product ? 'Yes' : 'No')
+    if (product) {
+      console.log('   - Name:', product.name)
+      console.log('   - Farmer:', product.farmer ? product.farmer.name : 'None')
+      console.log('   - Events count:', product.events ? product.events.length : 0)
+    }
 
     if (!product) {
       return NextResponse.json(
-        { error: 'Product not found' },
+        { success: false, error: 'Product not found' },
         { status: 404 }
       )
     }
 
-    // Build response with cache headers
-    const response = NextResponse.json(
-      {
-        success: true,
-        data: {
-          product: {
-            id: product.id,
-            name: product.name,
-            category: product.category,
-            origin: product.origin,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-            manufactureDate: product.manufactureDate,
-            blockchainTxId: product.blockchainTxId,
-            latitude: product.latitude,
-            longitude: product.longitude,
-            locationAccuracy: product.locationAccuracy,
-            price: product.price ? Number(product.price) : 0,
-            creator: product.farmer,
-          },
-          events: product.events.map((event) => ({
-            id: event.id,
-            type: event.eventType,
-            timestamp: event.timestamp,
-            location: event.location,
-            latitude: event.latitude,
-            longitude: event.longitude,
-            locationAccuracy: event.locationAccuracy,
-            blockchainTxId: event.blockchainTxId,
-          })),
-          eventCount: product.events.length,
-        },
-        verifiedAt: new Date().toISOString(),
-      },
-      {
-        headers: {
-          'X-RateLimit-Limit': '30',
-          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
-          'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-        },
-      }
-    )
+    // Sort events by timestamp descending
+    const sortedEvents = (product.events || []).sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    ).slice(0, 10)
 
-    return response
+    // Build response
+    return NextResponse.json({
+      success: true,
+      data: {
+        product: {
+          id: product.id,
+          name: product.name,
+          category: product.category || 'Uncategorized',
+          origin: product.origin,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+          manufactureDate: product.manufactureDate,
+          blockchainTxId: product.blockchainTxId,
+          latitude: product.latitude,
+          longitude: product.longitude,
+          locationAccuracy: product.locationAccuracy,
+          price: product.price ? Number(product.price) : 0,
+          creator: product.farmer ? {
+            name: product.farmer.name,
+            role: product.farmer.role
+          } : null,
+        },
+        events: sortedEvents.map((event) => ({
+          id: event.id,
+          type: event.eventType,
+          timestamp: event.timestamp,
+          location: event.location,
+          latitude: event.latitude,
+          longitude: event.longitude,
+          locationAccuracy: event.locationAccuracy,
+          blockchainTxId: event.blockchainTxId,
+        })),
+        eventCount: sortedEvents.length,
+      },
+      verifiedAt: new Date().toISOString(),
+    })
   } catch (error) {
-    console.error('Verify API error:', error)
+    console.error('❌ Verify API error:', error)
+    console.error('Error stack:', error.stack)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Internal server error', details: error.message },
       { status: 500 }
     )
   }
