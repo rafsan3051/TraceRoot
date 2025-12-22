@@ -1,4 +1,9 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+// Resolve __dirname in ESM context
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const USE_REAL_BLOCKCHAIN = process.env.USE_REAL_BLOCKCHAIN === 'true'
 
@@ -22,10 +27,18 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+      // Vercel Blob public URLs
+      {
+        protocol: 'https',
+        hostname: '*.blob.vercel-storage.com',
+      },
+      // Common S3 public URL patterns
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com',
+      },
     ],
   },
-  // Empty turbopack config to use defaults but avoid symlink issues
-  turbopack: {},
   webpack: (config, { isServer }) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
@@ -37,9 +50,17 @@ const nextConfig = {
     // Add support for importing .tsx files without extension
     config.resolve.extensions = ['.js', '.jsx', '.ts', '.tsx', ...config.resolve.extensions || []];
     
-    // Externalize ethers for server-side to avoid bundling when used
+    // Externalize heavy Fabric SDK deps so Next doesn't try to bundle .proto assets
     if (isServer && USE_REAL_BLOCKCHAIN) {
-      config.externals = [...(config.externals || []), 'ethers'];
+      config.externals = [
+        ...(config.externals || []),
+        'ethers',
+        'fabric-network',
+        'fabric-ca-client',
+        'fabric-protos',
+        '@grpc/grpc-js',
+        '@grpc/proto-loader'
+      ];
     }
     
     return config;

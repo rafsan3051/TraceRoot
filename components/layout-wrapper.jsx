@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 
 // Use relative imports from the components directory to avoid alias resolution issues
@@ -13,6 +14,27 @@ const Footer = dynamic(() => import('./footer').then(mod => mod.Footer), {
 })
 
 export default function LayoutWrapper({ children }) {
+  // Blur any focused input when clicking outside to avoid stray carets on the page
+  useEffect(() => {
+    const handleMouseDown = (event) => {
+      const active = document.activeElement
+      if (!(active instanceof HTMLElement)) return
+
+      const focusableSelector = 'input, textarea, select, button, [contenteditable="true"], [contenteditable=true], [role="textbox"], [data-keep-focus]'
+
+      const target = event.target
+      const targetIsFocusable = target instanceof HTMLElement && target.closest(focusableSelector)
+      const activeIsFocusable = active.matches(focusableSelector)
+
+      if (activeIsFocusable && !targetIsFocusable) {
+        active.blur()
+      }
+    }
+
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [])
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Navbar />

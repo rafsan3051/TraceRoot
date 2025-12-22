@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth/auth-utils'
 import prisma from '@/lib/prisma'
-import path from 'path'
-import { promises as fs } from 'fs'
-import { randomUUID } from 'crypto'
+import { saveAvatar } from '@/lib/storage'
 
 export const runtime = 'nodejs'
 
@@ -24,16 +22,11 @@ export async function POST(request) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
-    await fs.mkdir(uploadsDir, { recursive: true })
-
-    const ext = (file.name?.split('.').pop() || 'jpg').toLowerCase()
-    const filename = `${randomUUID()}.${ext}`
-    const filePath = path.join(uploadsDir, filename)
-
-    await fs.writeFile(filePath, buffer)
-
-    const publicUrl = `/uploads/${filename}`
+    const { url: publicUrl } = await saveAvatar({
+      buffer,
+      filename: file.name,
+      contentType: file.type,
+    })
 
     await prisma.user.update({
       where: { id: session.id },
