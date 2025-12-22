@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { CheckCircle2, Package, MapPin, Calendar, User, AlertCircle, Loader2 } from 'lucide-react'
+import { CheckCircle2, Package, MapPin, Calendar, User, AlertCircle, Loader2, Eye } from 'lucide-react'
 import { SupplyChainTimeline } from '@/components/supply-chain-timeline'
 
 export default function VerifyPage() {
@@ -14,8 +14,22 @@ export default function VerifyPage() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
 
   useEffect(() => {
+    async function checkAuthentication() {
+      try {
+        const res = await fetch('/api/auth/check')
+        const data = await res.json()
+        setIsAuthenticated(data.authenticated)
+      } catch (err) {
+        setIsAuthenticated(false)
+      } finally {
+        setCheckingAuth(false)
+      }
+    }
+
     async function fetchProduct() {
       try {
         const token = searchParams.get('t')
@@ -46,6 +60,7 @@ export default function VerifyPage() {
       }
     }
 
+    checkAuthentication()
     fetchProduct()
   }, [params.id, searchParams])
 
@@ -199,24 +214,40 @@ export default function VerifyPage() {
             </div>
           )}
         </div>
-
-        {/* Supply Chain Events */}
-        {events.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
-            <h3 className="text-xl font-bold mb-6">Supply Chain History</h3>
-            <SupplyChainTimeline events={events} />
-            <p className="text-xs text-gray-500 mt-4 text-center">
-              Showing last {events.length} event{events.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-        )}
-
-        {/* CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">
-          <h3 className="text-xl font-bold mb-2">Want to see more details?</h3>
-          <p className="text-blue-100 mb-6">Create an account to access full product history, maps, and more</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a 
+{!checkingAuth && (
+          isAuthenticated ? (
+            <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">
+              <h3 className="text-xl font-bold mb-2">View Full Details</h3>
+              <p className="text-emerald-100 mb-6">Access complete product history, interactive maps, supply chain timeline, and more</p>
+              <Link 
+                href={`/product/${product.id}`}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-emerald-600 rounded-lg font-semibold hover:bg-emerald-50 transition"
+              >
+                <Eye className="h-5 w-5" />
+                View Full Product Details
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">
+              <h3 className="text-xl font-bold mb-2">Want to see more details?</h3>
+              <p className="text-blue-100 mb-6">Create an account to access full product history, maps, and more</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a 
+                  href={`/auth?redirect=/product/${product.id}`}
+                  className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+                >
+                  Login
+                </a>
+                <a 
+                  href={`/auth/register?redirect=/product/${product.id}`}
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-400 transition border-2 border-white"
+                >
+                  Register
+                </a>
+              </div>
+            </div>
+          )
+        )} 
               href={`/auth?redirect=/product/${product.id}`}
               className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
             >
