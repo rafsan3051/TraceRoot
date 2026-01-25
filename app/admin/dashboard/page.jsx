@@ -14,10 +14,6 @@ export default function AdminDashboard() {
   const [data, setData] = useState({ users: [], products: [], events: [], stats: {} })
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    fetchAllData()
-  }, [])
-
   const fetchAllData = async () => {
     try {
       setError(null)
@@ -34,6 +30,15 @@ export default function AdminDashboard() {
       setError('Network error while loading admin data')
     }
   }
+
+  useEffect(() => {
+    let mounted = true
+    const loadData = async () => {
+      if (mounted) await fetchAllData()
+    }
+    loadData()
+    return () => { mounted = false }
+  }, [])
 
   const verifyUser = async (userId) => {
     try {

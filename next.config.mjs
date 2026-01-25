@@ -11,6 +11,8 @@ const USE_REAL_BLOCKCHAIN = process.env.USE_REAL_BLOCKCHAIN === 'true'
 const nextConfig = {
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  // Silence monorepo/workspace root inference warning by explicitly setting the root
+  outputFileTracingRoot: path.resolve(__dirname, '..'),
   typescript: {
     // !! WARN !!
     // This is for demonstration only - type checking is recommended in production

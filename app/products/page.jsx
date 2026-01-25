@@ -21,12 +21,12 @@ export default function ProductsPage() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    fetchProducts()
-    checkAuthentication()
+    void fetchProducts()
+    void checkAuthentication()
     
     // Recheck auth when window regains focus (after login redirect)
     const handleFocus = () => {
-      checkAuthentication()
+      void checkAuthentication()
     }
     
     window.addEventListener('focus', handleFocus)
@@ -38,6 +38,7 @@ export default function ProductsPage() {
       window.removeEventListener('focus', handleFocus)
       clearInterval(interval)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchProducts = async () => {

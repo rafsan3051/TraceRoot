@@ -27,7 +27,10 @@ export default function PriceHistory({ productId, canEdit = false }) {
     }
   }
 
-  useEffect(() => { fetchData() }, [productId])
+  useEffect(() => { 
+    void fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [productId])
 
   async function submitUpdate() {
     try {

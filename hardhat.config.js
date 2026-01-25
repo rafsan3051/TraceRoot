@@ -1,5 +1,8 @@
 // Hardhat configuration for TraceRoot smart contracts
 // CommonJS for compatibility with Next.js ESM
+// Ensure blockchain module uses mock mode during smart contract tests
+process.env.USE_REAL_BLOCKCHAIN = 'false';
+
 let hardhatConfig = {};
 
 try {

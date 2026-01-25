@@ -6,8 +6,8 @@ import { sendPasswordResetEmail } from '@/lib/email'
 export const runtime = 'nodejs'
 
 /**
- * POST /api/auth/forgot
- * Request password reset email
+ * POST /api/auth/resend
+ * Resend password reset email if the initial one was missed or expired
  * 
  * Request body:
  * {
@@ -17,8 +17,7 @@ export const runtime = 'nodejs'
  * Response:
  * {
  *   "success": true,
- *   "message": "If an account exists, a reset link has been sent.",
- *   "token": "xxx" // Only in development for testing
+ *   "message": "If an account exists, a reset link has been sent to your email."
  * }
  */
 export async function POST(request) {
@@ -41,6 +40,7 @@ export async function POST(request) {
       )
     }
 
+    // Find user
     const user = await prisma.user.findUnique({ where: { email } })
 
     // Always return success to avoid email enumeration
@@ -59,7 +59,7 @@ export async function POST(request) {
       })
     }
 
-    // Delete any existing tokens for this user
+    // Delete any existing tokens for this user (clean up old ones)
     await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } })
 
     // Generate new token
@@ -75,7 +75,7 @@ export async function POST(request) {
       },
     })
 
-    // Send email with reset link
+    // Send email
     const emailResult = await sendPasswordResetEmail(email, token)
 
     if (!emailResult.success) {
@@ -89,7 +89,7 @@ export async function POST(request) {
       ...(process.env.NODE_ENV === 'development' && { token }) // Dev only
     })
   } catch (error) {
-    console.error('Forgot password error:', error)
+    console.error('Resend password error:', error)
     return NextResponse.json(
       { error: 'Failed to process request' },
       { status: 500 }
