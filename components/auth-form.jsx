@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import ForgotPassword from './forgot-password'
 import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '@/lib/auth/auth-context'
@@ -12,6 +14,7 @@ export default function AuthForm() {
   const { login: authLogin, register: authRegister } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
+  const [showForgot, setShowForgot] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -59,10 +62,13 @@ export default function AuthForm() {
       animate={{ opacity: 1, y: 0 }}
       className="max-w-md mx-auto p-4 sm:p-6 bg-card rounded-lg shadow-lg border"
     >
-      <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">
-        {isRegister ? 'Create Account' : 'Welcome Back'}
-      </h1>
+      {!showForgot && (
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">
+          {isRegister ? 'Create Account' : 'Welcome Back'}
+        </h1>
+      )}
 
+      {!showForgot && (
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         {isRegister && (
           <>
@@ -164,19 +170,27 @@ export default function AuthForm() {
           {isLoading ? 'Processing...' : (isRegister ? 'Register' : 'Login')}
         </motion.button>
       </form>
+      )}
 
-      {!isRegister && (
+      {showForgot && (
+        <ForgotPassword />
+      )}
+
+      {!isRegister && !showForgot && (
         <div className="mt-3 text-right">
           <button
-            onClick={() => router.push('/auth/forgot')}
-            className="text-xs sm:text-sm text-primary hover:underline"
-            disabled={isLoading}
+            type="button"
+            className="text-xs sm:text-sm text-primary hover:underline cursor-pointer transition-colors"
+            onClick={() => {
+              setShowForgot(true)
+            }}
           >
             Forgot password?
           </button>
         </div>
       )}
 
+      {!showForgot && (
       <p className="mt-4 text-xs sm:text-sm text-center">
         {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
         <button
@@ -187,6 +201,7 @@ export default function AuthForm() {
           {isRegister ? 'Login' : 'Register'}
         </button>
       </p>
+      )}
     </motion.div>
   )
 }

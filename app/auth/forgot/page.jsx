@@ -1,24 +1,57 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowLeft, CheckCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Mail, Lock, CheckCircle } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
-  const [step, setStep] = useState(1) // 1: email, 2: PIN, 3: success
+  const [step, setStep] = useState(1) // 1: email, 2: send code, 3: verify pin, 4: reset password
   const [email, setEmail] = useState('')
   const [pin, setPin] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [emailValid, setEmailValid] = useState(false)
   const [resetToken, setResetToken] = useState('')
-  const [attemptsLeft, setAttemptsLeft] = useState(5)
+  const [showPassword, setShowPassword] = useState(false)
 
-  // Step 1: Request PIN
-  const handleRequestPIN = async (e) => {
+  // Step 1: Verify email exists
+  const handleVerifyEmail = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    setMessage('')
+
+    try {
+      // Check if email exists by attempting to send a verification code
+      const res = await fetch('/api/auth/forgot-password-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to verify email')
+      }
+
+      setEmailValid(true)
+      setMessage('Email verified. Click "Send Code" to receive a verification PIN.')
+      setStep(2)
+    } catch (err) {
+      setError(err.message || 'Failed to verify email. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Step 2: Send PIN code
+  const handleSendCode = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
@@ -34,29 +67,26 @@ export default function ForgotPasswordPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to send PIN')
+        throw new Error(data.error || 'Failed to send code')
       }
 
-      setMessage(data.message)
-      setStep(2)
-
-      // Show PIN in development
-      if (data.pin) {
-        console.log('Development PIN:', data.pin)
-        setMessage(`${data.message} (Development PIN: ${data.pin})`)
-      }
+      // In development, show the PIN for testing
+      const devNote = data.pin ? ` (Dev PIN: ${data.pin})` : ''
+      setMessage(`Verification PIN sent to ${email}${devNote}`)
+      setStep(3)
     } catch (err) {
-      setError(err.message || 'Failed to send PIN. Please try again.')
+      setError(err.message || 'Failed to send code. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Step 2: Verify PIN
-  const handleVerifyPIN = async (e) => {
+  // Step 3: Verify PIN and get reset token
+  const handleVerifyPin = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setMessage('')
 
     try {
       const res = await fetch('/api/auth/verify-password-pin', {
@@ -68,40 +98,64 @@ export default function ForgotPasswordPage() {
       const data = await res.json()
 
       if (!res.ok) {
-        if (data.attemptsLeft !== undefined) {
-          setAttemptsLeft(data.attemptsLeft)
-        }
         throw new Error(data.error || 'Invalid PIN')
       }
 
       setResetToken(data.resetToken)
-      setStep(3)
-      setMessage('PIN verified successfully!')
-
-      // Redirect to reset password page after 2 seconds
-      setTimeout(() => {
-        router.push(`/auth/reset?token=${data.resetToken}`)
-      }, 2000)
+      setMessage('PIN verified successfully. You can now set a new password.')
+      setStep(4)
     } catch (err) {
-      setError(err.message || 'Failed to verify PIN.')
+      setError(err.message || 'Failed to verify PIN. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleResendPIN = async () => {
-    setPin('')
-    setAttemptsLeft(5)
-    await handleRequestPIN({ preventDefault: () => {} })
+  // Step 4: Reset password
+  const handleResetPassword = async (e) => {
+    e.preventDefault()
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    setMessage('')
+
+    try {
+      const res = await fetch('/api/auth/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: resetToken, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to reset password')
+      }
+
+      setMessage('Password reset successfully!')
+      setTimeout(() => {
+        router.push('/auth?message=password-reset')
+      }, 2000)
+    } catch (err) {
+      setError(err.message || 'Failed to reset password. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
+      <div className="w-full max-w-md">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
@@ -112,31 +166,36 @@ export default function ForgotPasswordPage() {
               Reset Password
             </h2>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {step === 1 && "Enter your email to receive a verification PIN"}
-              {step === 2 && "Enter the 6-digit PIN sent to your email"}
-              {step === 3 && "Redirecting to password reset..."}
+              {step === 1 && 'Enter your email address'}
+              {step === 2 && 'Click Send Code to receive a verification PIN'}
+              {step === 3 && 'Enter the verification code sent to your email'}
+              {step === 4 && 'Create a new password'}
             </p>
           </div>
 
-          {/* Progress Indicator */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
-              }`}>
+          {/* Progress Steps */}
+          <div className="mb-8 flex justify-between text-xs font-medium">
+            <div className={`flex items-center ${step >= 1 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
                 1
               </div>
-              <div className={`w-12 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`} />
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
-              }`}>
+            </div>
+            <div className={`flex items-center ${step >= 2 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
+              <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
                 2
               </div>
-              <div className={`w-12 h-1 ${step >= 3 ? 'bg-blue-600' : 'bg-gray-300'}`} />
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 3 ? 'bg-green-600 text-white' : 'bg-gray-300 text-gray-600'
-              }`}>
-                ✓
+            </div>
+            <div className={`flex items-center ${step >= 3 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
+              <div className={`flex-1 h-1 mx-2 ${step >= 3 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                3
+              </div>
+            </div>
+            <div className={`flex items-center ${step >= 4 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
+              <div className={`flex-1 h-1 mx-2 ${step >= 4 ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 4 ? 'bg-blue-600 dark:bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                4
               </div>
             </div>
           </div>
@@ -145,11 +204,6 @@ export default function ForgotPasswordPage() {
           {error && (
             <div className="mb-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-              {attemptsLeft < 5 && attemptsLeft > 0 && (
-                <p className="text-xs text-red-500 mt-1">
-                  {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} remaining
-                </p>
-              )}
             </div>
           )}
 
@@ -159,9 +213,9 @@ export default function ForgotPasswordPage() {
             </div>
           )}
 
-          {/* Step 1: Email Form */}
+          {/* Step 1: Email */}
           {step === 1 && (
-            <form onSubmit={handleRequestPIN} className="space-y-6">
+            <form onSubmit={handleVerifyEmail} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Email Address
@@ -175,8 +229,28 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                     placeholder="your@email.com"
+                    disabled={loading}
                   />
                 </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !email}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Verifying...' : 'Verify Email'}
+              </button>
+            </form>
+          )}
+
+          {/* Step 2: Send Code */}
+          {step === 2 && (
+            <form onSubmit={handleSendCode} className="space-y-6">
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  Email: <strong>{email}</strong>
+                </p>
               </div>
 
               <button
@@ -184,31 +258,41 @@ export default function ForgotPasswordPage() {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Sending PIN...' : 'Send Verification PIN'}
+                {loading ? 'Sending...' : 'Send Code'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setStep(1)
+                  setError('')
+                  setMessage('')
+                }}
+                className="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              >
+                Change Email
               </button>
             </form>
           )}
 
-          {/* Step 2: PIN Verification Form */}
-          {step === 2 && (
-            <form onSubmit={handleVerifyPIN} className="space-y-6">
+          {/* Step 3: Verify PIN */}
+          {step === 3 && (
+            <form onSubmit={handleVerifyPin} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  6-Digit PIN
+                  Verification Code
                 </label>
                 <input
                   type="text"
                   required
                   value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className="w-full text-center text-2xl font-bold tracking-widest py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="000000"
-                  maxLength={6}
-                  autoFocus
+                  onChange={(e) => setPin(e.target.value.toUpperCase())}
+                  maxLength="6"
+                  placeholder="Enter 6-digit code"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-center text-2xl tracking-widest"
+                  disabled={loading}
                 />
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                  Enter the 6-digit PIN sent to {email}
-                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Check your email for the code</p>
               </div>
 
               <button
@@ -216,40 +300,75 @@ export default function ForgotPasswordPage() {
                 disabled={loading || pin.length !== 6}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Verifying...' : 'Verify PIN'}
+                {loading ? 'Verifying...' : 'Verify Code'}
               </button>
 
               <button
                 type="button"
-                onClick={handleResendPIN}
+                onClick={() => {
+                  setStep(2)
+                  setPin('')
+                  setError('')
+                  setMessage('')
+                }}
                 className="w-full text-blue-600 dark:text-blue-400 hover:underline text-sm"
               >
-                Didn&apos;t receive the PIN? Resend
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="w-full text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to email
+                Didn't receive code? Send again
               </button>
             </form>
           )}
 
-          {/* Step 3: Success */}
-          {step === 3 && (
-            <div className="text-center py-8">
-              <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                PIN Verified!
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Redirecting to reset your password...
-              </p>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-            </div>
+          {/* Step 4: Reset Password */}
+          {step === 4 && (
+            <form onSubmit={handleResetPassword} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                    placeholder="Create a strong password"
+                    disabled={loading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"
+                  >
+                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">At least 8 characters</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Re-enter password"
+                  disabled={loading}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || !password || !confirmPassword}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Resetting...' : 'Reset Password'}
+              </button>
+            </form>
           )}
 
           {/* Footer */}
@@ -262,7 +381,7 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

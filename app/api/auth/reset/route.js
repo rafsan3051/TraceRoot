@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { hashPassword } from '@/lib/auth/auth-utils'
+import { validatePassword } from '@/lib/auth/password-validator'
 
 export const runtime = 'nodejs'
 
@@ -9,6 +10,15 @@ export async function POST(request) {
     const { token, password } = await request.json()
     if (!token || !password) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+    }
+
+    // Validate password strength before processing
+    const validation = validatePassword(password)
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: validation.errors[0] || 'Password does not meet requirements' },
+        { status: 400 }
+      )
     }
 
     const reset = await prisma.passwordResetToken.findUnique({ where: { token } })

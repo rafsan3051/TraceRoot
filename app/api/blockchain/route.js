@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { verifyBlockchainData, getBlockchainHistory } from '../../../lib/blockchain'
+import { verifyTransaction, queryProductHistory } from '../../../lib/blockchain'
 
 export async function GET(request) {
   try {
@@ -8,12 +8,12 @@ export async function GET(request) {
     const productId = searchParams.get('productId')
 
     if (txId) {
-      const verification = await verifyBlockchainData(txId)
+      const verification = await verifyTransaction(txId)
       return NextResponse.json(verification)
     }
 
     if (productId) {
-      const history = await getBlockchainHistory(productId)
+      const history = await queryProductHistory(productId)
       return NextResponse.json({ history })
     }
 

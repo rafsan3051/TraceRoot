@@ -1,0 +1,65 @@
+{
+  "name": "TraceRoot Kaleido Network",
+  "version": "1.0.0",
+  "client": {
+    "organization": "TraceRoot",
+    "connection": {
+      "timeout": {
+        "peer": {
+          "endorser": "300"
+        },
+        "orderer": "300"
+      }
+    }
+  },
+  "organizations": {
+    "TraceRoot": {
+      "mspid": "TraceRoot-MSP",
+      "peers": [
+        "peer-u0app91pss"
+      ],
+      "certificateAuthorities": [
+        "ca-u0d5lacfnl"
+      ]
+    }
+  },
+  "peers": {
+    "peer-u0app91pss": {
+      "url": "https://u0qfg5wct0-u0app91pss-peer.us0-aws-ws.kaleido.io",
+      "grpcOptions": {
+        "ssl-target-name-override": "peer-u0app91pss",
+        "hostnameOverride": "peer-u0app91pss",
+        "grpc.http2.keepalive_time": 15
+      }
+    }
+  },
+  "orderers": {
+    "orderer-u0qe6uzqx3": {
+      "url": "https://u0qfg5wct0-u0atqvfxkx-tunneler.us0-aws.kaleido.io"
+    }
+  },
+  "certificateAuthorities": {
+    "ca-u0d5lacfnl": {
+      "url": "https://u0qfg5wct0-u0d5lacfnl-fabric-ca.us0-aws.kaleido.io",
+      "caName": "TraceRoot CA",
+      "httpOptions": {
+        "verify": false
+      }
+    }
+  },
+  "channels": {
+    "tracerootchannel": {
+      "orderers": [
+        "orderer-u0qe6uzqx3"
+      ],
+      "peers": {
+        "peer-u0app91pss": {
+          "endorsingPeer": true,
+          "chaincodeQuery": true,
+          "ledgerQuery": true,
+          "eventSource": true
+        }
+      }
+    }
+  }
+}

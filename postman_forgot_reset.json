@@ -1,0 +1,165 @@
+{
+  "info": {
+    "name": "Forgot & Reset Password",
+    "description": "Test forgot password and reset password endpoints",
+    "version": "1.0"
+  },
+  "item": [
+    {
+      "name": "Request Password Reset",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testuser@example.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/forgot",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "forgot"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password - Valid",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"NewPassword123!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/reset",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "reset"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password - Weak (8 chars, no special)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/reset",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "reset"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password - Too Short",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"Pass1!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/reset",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "reset"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Password - Invalid Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"invalid-token-12345\",\n  \"password\": \"NewPassword123!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/auth/reset",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "auth",
+            "reset"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "resetToken",
+      "value": "paste-token-from-forgot-response-here"
+    }
+  ]
+}

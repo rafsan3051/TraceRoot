@@ -2,12 +2,14 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import crypto from 'crypto'
 import { sendPasswordResetEmail } from '@/lib/email'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
 /**
  * POST /api/auth/forgot
  * Request password reset email
+ * Rate limited: 5 requests per hour per IP
  * 
  * Request body:
  * {
@@ -23,6 +25,17 @@ export const runtime = 'nodejs'
  */
 export async function POST(request) {
   try {
+    // Rate limiting: max 5 requests per hour per IP
+    const clientIp = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    const isAllowed = checkRateLimit(`forgot-password:${clientIp}`, 5, 3600)
+    
+    if (!isAllowed) {
+      return NextResponse.json(
+        { error: 'Too many reset requests. Please try again in an hour.' },
+        { status: 429 }
+      )
+    }
+
     const { email } = await request.json()
 
     if (!email) {
