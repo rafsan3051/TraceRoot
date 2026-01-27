@@ -5,27 +5,40 @@ export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
 
+// This endpoint is only used in development
+// In production, this should be disabled or removed
 export async function POST(req) {
+  // Always disabled in production - Vercel deployment should not use this
   if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'Disabled in production' }, { status: 403 })
-  }
-  // Optional shared key to prevent arbitrary calls
-  const key = process.env.FABRIC_ENROLL_KEY
-  const incoming = req.headers.get('x-enroll-key')
-  if (key && key !== incoming) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Enrollment disabled in production' }, { status: 403 })
   }
 
   try {
-    // Dynamic import to keep client bundle clean
+    const key = process.env.FABRIC_ENROLL_KEY
+    const incoming = req.headers.get('x-enroll-key')
+    if (key && key !== incoming) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Dynamically import Fabric packages only in dev
+    // These have native binaries and .proto files that don't bundle well
     const path = (await import('path')).default
     const fs = await import('fs')
 
-    const { default: FabricCAServices } = await import('fabric-ca-client')
-    const { Wallets } = await import('fabric-network')
+    let FabricCAServices, Wallets
+    try {
+      FabricCAServices = (await import('fabric-ca-client')).default
+      Wallets = (await import('fabric-network')).Wallets
+    } catch (importErr) {
+      // Fabric SDK packages not available (expected in Vercel production)
+      return NextResponse.json({ 
+        error: 'Fabric SDK not available - this endpoint is for development only',
+        details: importErr.message 
+      }, { status: 503 })
+    }
 
     const ccpPath = process.env.HYPERLEDGER_CONNECTION_PROFILE || path.join(process.cwd(), 'fabric-network', 'connection-profile.json')
-    if (!fs.existsSync(ccpPath)) {
+    if (!fs.existsSync?.(ccpPath)) {
       return NextResponse.json({ error: `Connection profile not found at ${ccpPath}` }, { status: 400 })
     }
     const ccp = JSON.parse(fs.readFileSync(ccpPath, 'utf8'))
@@ -77,6 +90,6 @@ export async function POST(req) {
 
     return NextResponse.json({ ok: true, admin: didEnrollAdmin, user: didEnrollUser })
   } catch (e) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+    return NextResponse.json({ error: e.message, stack: process.env.NODE_ENV === 'development' ? e.stack : undefined }, { status: 500 })
   }
 }
