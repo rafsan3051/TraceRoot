@@ -1,0 +1,11 @@
+# Don't include development files in Vercel
+.env.local
+.next/cache
+node_modules/.cache
+coverage
+test
+scripts
+.git
+fabric-network
+wallet
+docs
