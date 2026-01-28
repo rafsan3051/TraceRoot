@@ -1,0 +1,8 @@
+{
+  "name": "Test Product",
+  "origin": "Farm A",
+  "manufactureDate": "2026-01-01",
+  "category": "Vegetables",
+  "description": "Test product registration",
+  "price": 100
+}

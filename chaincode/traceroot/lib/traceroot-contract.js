@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
-const { Contract } = require("fabric-contract-api");
+const { Contract } = require('fabric-contract-api');
 
 class TraceRootContract extends Contract {
   async initLedger(ctx) {
     console.info("🚀 TraceRoot chaincode initialized");
   }
 
-  async RegisterProduct(ctx, productId, name, origin, category, dataJson) {
+  async RegisterProduct(ctx, productId, name, origin, category, manufacturer, mfgDate, expiryDate, dataJson) {
     const exists = await this._assetExists(ctx, productId);
     if (exists) {
       throw new Error(`Product ${productId} already exists`);
@@ -20,6 +20,9 @@ class TraceRootContract extends Contract {
       name,
       origin,
       category,
+      manufacturer,
+      mfgDate,
+      expiryDate,
       data,
       owner: data.owner || "Org1MSP",
       createdAt: new Date().toISOString(),
@@ -104,3 +107,4 @@ class TraceRootContract extends Contract {
 }
 
 module.exports = TraceRootContract;
+module.exports.TraceRootContract = TraceRootContract;
