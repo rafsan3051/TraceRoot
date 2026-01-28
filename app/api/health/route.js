@@ -29,11 +29,6 @@ export async function GET(request) {
     }, { status: 500 })
   }
 }
-      error: error.message,
-      timestamp: new Date().toISOString()
-    }
-  }
-}
 
 /**
  * Check external email service
