@@ -43,18 +43,26 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Only farmers can register products' }, { status: 403 })
     }
 
-    // Record to blockchain with location data
+    // Record to blockchain with complete product data
+    console.log('📝 Starting blockchain registration for product:', name)
     const blockchainTxId = await recordToBlockchain({
-      type: 'PRODUCT_CREATION',
-      data: { 
-        name, 
-        origin, 
-          manufactureDate: manufactureDateObj,
-        latitude: latitude || null,
-        longitude: longitude || null,
-        locationAccuracy: locationAccuracy || null
-      }
+      id: String(Date.now()) + Math.random().toString(36).substr(2, 9),
+      name,
+      origin,
+      category: category || 'Uncategorized',
+      manufacturer: user.name || user.email || 'Unknown Farmer',
+      mfgDate: manufactureDateObj.toISOString(),
+      description: description || '',
+      price: priceNum,
+      latitude: latitude || null,
+      longitude: longitude || null,
+      locationAccuracy: locationAccuracy || null,
+      farmerId: user.id,
+      farmerEmail: user.email,
+      farmerPhone: user.phone || '',
+      registeredAt: new Date().toISOString()
     })
+    console.log('✅ Blockchain TX ID returned:', blockchainTxId)
 
     // Create product in database
     const product = await prisma.product.create({
@@ -83,14 +91,17 @@ export async function POST(request) {
       data: { qrCodeUrl }
     })
 
+    console.log('✅ Product created:', { id: product.id, name, blockchainTxId })
+    
     return NextResponse.json({ 
       success: true, 
-      product: { ...product, qrCodeUrl } 
+      product: { ...product, qrCodeUrl },
+      blockchainTxId 
     })
   } catch (error) {
-    console.error('Error creating product:', error)
+    console.error('❌ Error creating product:', error.message)
     return NextResponse.json(
-      { error: 'Failed to create product' },
+      { error: 'Failed to create product', details: error.message },
       { status: 500 }
     )
   }

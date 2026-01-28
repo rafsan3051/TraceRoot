@@ -5,33 +5,35 @@ import { comparePasswords, createToken } from '../../../../lib/auth/auth-utils'
 
 export async function POST(request) {
   try {
-    const { email, password } = await request.json()
+    const body = await request.json()
+
+    // Validate input
+    if (!body.email || !body.password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      )
+    }
 
     // Try to find user by email first, then by username, then fallback to name for backward compatibility
-    let user = await prisma.user.findUnique({ where: { email } })
+    let user = await prisma.user.findUnique({ where: { email: body.email } })
 
     if (!user) {
-      user = await prisma.user.findUnique({ where: { username: email } }).catch(() => null)
+      user = await prisma.user.findUnique({ where: { username: body.email } }).catch(() => null)
     }
 
     if (!user) {
-      user = await prisma.user.findFirst({ where: { name: email } }) // legacy fallback
+      user = await prisma.user.findFirst({ where: { name: body.email } }) // legacy fallback
     }
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const isValidPassword = await comparePasswords(password, user.password)
-    
+    const isValidPassword = await comparePasswords(body.password, user.password)
+
     if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
     // Create JWT token
@@ -50,13 +52,13 @@ export async function POST(request) {
       maxAge: 60 * 60 * 24 // 24 hours
     })
 
-  // Return user data (excluding password)
-  const { password: _, ...userData } = user
-    return NextResponse.json({ user: userData })
+    // Return user data (excluding password)
+    const { password: _, ...userData } = user
+    return NextResponse.json({ user: userData }, { status: 200 })
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Login failed' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

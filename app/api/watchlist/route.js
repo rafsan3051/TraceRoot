@@ -5,20 +5,23 @@
 
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { verifyAuth } from '@/lib/auth/verify-auth'
+import { getSession } from '@/lib/auth/auth-utils'
 
 export const dynamic = 'force-dynamic'
 
 // GET /api/watchlist - Get user's watched products
 export async function GET(request) {
   try {
-    const auth = await verifyAuth(request)
-    if (!auth.authenticated) {
+    console.log('📋 Watchlist GET request')
+    const session = await getSession()
+    
+    if (!session || !session.id) {
+      console.warn('⚠️ Watchlist unauthorized: No session')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const watches = await prisma.productWatch.findMany({
-      where: { userId: auth.user.id },
+      where: { userId: session.id },
       include: {
         product: {
           select: {
@@ -44,8 +47,11 @@ export async function GET(request) {
 // POST /api/watchlist - Add product to watchlist
 export async function POST(request) {
   try {
-    const auth = await verifyAuth(request)
-    if (!auth.authenticated) {
+    console.log('📋 Watchlist POST request')
+    const session = await getSession()
+    
+    if (!session || !session.id) {
+      console.warn('⚠️ Watchlist unauthorized: No session')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -99,8 +105,8 @@ export async function POST(request) {
 // DELETE /api/watchlist?productId=xxx - Remove product from watchlist
 export async function DELETE(request) {
   try {
-    const auth = await verifyAuth(request)
-    if (!auth.authenticated) {
+    const session = await getSession()
+    if (!session || !session.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -113,7 +119,7 @@ export async function DELETE(request) {
 
     await prisma.productWatch.deleteMany({
       where: {
-        userId: auth.user.id,
+        userId: session.id,
         productId,
       },
     })

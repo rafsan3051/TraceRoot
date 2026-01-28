@@ -14,17 +14,22 @@ export async function POST(request) {
     const session = await getSession()
     const userId = session?.id || null
 
-    // Record to blockchain with location data
+    // Record to blockchain with complete event data
     const blockchainTxId = await recordToBlockchain({
-      type: 'SUPPLY_CHAIN_EVENT',
-      data: { 
-        productId, 
-        eventType, 
-        location,
-        latitude: latitude || null,
-        longitude: longitude || null,
-        locationAccuracy: locationAccuracy || null
-      }
+      id: String(Date.now()) + Math.random().toString(36).substr(2, 9),
+      name: `Supply Chain Event - ${eventType}`,
+      origin: location || 'Unknown Location',
+      category: eventType,
+      manufacturer: userId || 'System',
+      mfgDate: new Date().toISOString(),
+      productId,
+      eventType,
+      location,
+      latitude: latitude || null,
+      longitude: longitude || null,
+      locationAccuracy: locationAccuracy || null,
+      userId,
+      recordedAt: new Date().toISOString()
     })
 
     // Create event in database

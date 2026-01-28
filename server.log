@@ -1,0 +1,14 @@
+
+> trace-root@0.1.0 dev
+> next dev --webpack
+
+ΓÜá Port 3000 is in use by process 6568, using available port 3001 instead.
+Γû▓ Next.js 16.1.1 (webpack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.101:3001
+- Environments: .env
+
+Γ£ô Starting...
+Γ¿» Unable to acquire lock at G:\VSCODE\TraceRoot\.next\dev\lock, is another instance of next dev running?
+  Suggestion: If you intended to restart next dev, terminate the other process, and then try again.
+[?25h
