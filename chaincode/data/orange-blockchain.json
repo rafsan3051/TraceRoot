@@ -1,0 +1,964 @@
+{
+  "name": "TraceRoot Orange Supply Chain",
+  "description": "22 blocks tracking oranges from Green Farm",
+  "created": "2026-01-29T06:52:55.448Z",
+  "blocks": [
+    {
+      "blockNumber": 0,
+      "timestamp": "2026-01-28T08:00:00.000Z",
+      "previousHash": "0000000000000000",
+      "transactions": [],
+      "data": {
+        "type": "GENESIS",
+        "message": "TraceRoot Blockchain Initialized"
+      },
+      "hash": "000000004fab175f"
+    },
+    {
+      "blockNumber": 1,
+      "timestamp": "2026-01-28T09:00:00.000Z",
+      "previousHash": "000000004fab175f",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0001",
+          "timestamp": "2026-01-28T09:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "FARM_REGISTRATION",
+            "location": "Green Farm, California",
+            "description": "Farm registered in system",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000006fb45ee7"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "FARM_REGISTRATION",
+        "location": "Green Farm, California"
+      },
+      "hash": "0000000073d4d24a"
+    },
+    {
+      "blockNumber": 2,
+      "timestamp": "2026-01-28T10:00:00.000Z",
+      "previousHash": "0000000073d4d24a",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0002",
+          "timestamp": "2026-01-28T10:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "SEED_PLANTING",
+            "location": "Green Farm - Field A",
+            "description": "Orange tree seeds planted",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000003bfb9c8b"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "SEED_PLANTING",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000007d777024"
+    },
+    {
+      "blockNumber": 3,
+      "timestamp": "2026-01-28T11:00:00.000Z",
+      "previousHash": "000000007d777024",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0003",
+          "timestamp": "2026-01-28T11:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "WATERING",
+            "location": "Green Farm - Field A",
+            "description": "Trees watered - 500L water used",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000000d08d756"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "WATERING",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000005d84a505"
+    },
+    {
+      "blockNumber": 4,
+      "timestamp": "2026-01-28T12:00:00.000Z",
+      "previousHash": "000000005d84a505",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0004",
+          "timestamp": "2026-01-28T12:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "FERTILIZER",
+            "location": "Green Farm - Field A",
+            "description": "Organic fertilizer applied",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000047ea15ba"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "FERTILIZER",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000003b77d3f8"
+    },
+    {
+      "blockNumber": 5,
+      "timestamp": "2026-01-28T13:00:00.000Z",
+      "previousHash": "000000003b77d3f8",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0005",
+          "timestamp": "2026-01-28T13:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "GROWTH_INSPECTION",
+            "location": "Green Farm - Field A",
+            "description": "Trees inspected - healthy growth",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "00000000262e0df9"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "GROWTH_INSPECTION",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "00000000425185cd"
+    },
+    {
+      "blockNumber": 6,
+      "timestamp": "2026-01-28T14:00:00.000Z",
+      "previousHash": "00000000425185cd",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0006",
+          "timestamp": "2026-01-28T14:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "PEST_CONTROL",
+            "location": "Green Farm - Field A",
+            "description": "Organic pest control applied",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000013d77d57"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "PEST_CONTROL",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000006ec5b567"
+    },
+    {
+      "blockNumber": 7,
+      "timestamp": "2026-01-28T15:00:00.000Z",
+      "previousHash": "000000006ec5b567",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0007",
+          "timestamp": "2026-01-28T15:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "QUALITY_CHECK",
+            "location": "Green Farm - Field A",
+            "description": "Quality inspection - Grade A",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000004d8b40fe"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "QUALITY_CHECK",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000005e53cd96"
+    },
+    {
+      "blockNumber": 8,
+      "timestamp": "2026-01-28T16:00:00.000Z",
+      "previousHash": "000000005e53cd96",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0008",
+          "timestamp": "2026-01-28T16:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "HARVEST_START",
+            "location": "Green Farm - Field A",
+            "description": "Harvest season started",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000055f859b9"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "HARVEST_START",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000002b47f388"
+    },
+    {
+      "blockNumber": 9,
+      "timestamp": "2026-01-28T17:00:00.000Z",
+      "previousHash": "000000002b47f388",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0009",
+          "timestamp": "2026-01-28T17:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "PICKING",
+            "location": "Green Farm - Field A",
+            "description": "500kg oranges picked",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "00000000646c3891"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "PICKING",
+        "location": "Green Farm - Field A"
+      },
+      "hash": "000000000dc10db4"
+    },
+    {
+      "blockNumber": 10,
+      "timestamp": "2026-01-28T18:00:00.000Z",
+      "previousHash": "000000000dc10db4",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0010",
+          "timestamp": "2026-01-28T18:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "SORTING",
+            "location": "Green Farm - Sorting Facility",
+            "description": "Oranges sorted by size and quality",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000005a8f4c27"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "SORTING",
+        "location": "Green Farm - Sorting Facility"
+      },
+      "hash": "00000000494e411a"
+    },
+    {
+      "blockNumber": 11,
+      "timestamp": "2026-01-28T19:00:00.000Z",
+      "previousHash": "00000000494e411a",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0011",
+          "timestamp": "2026-01-28T19:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "WASHING",
+            "location": "Green Farm - Processing",
+            "description": "Oranges washed and cleaned",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000001736e354"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "WASHING",
+        "location": "Green Farm - Processing"
+      },
+      "hash": "00000000018cce5f"
+    },
+    {
+      "blockNumber": 12,
+      "timestamp": "2026-01-28T20:00:00.000Z",
+      "previousHash": "00000000018cce5f",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0012",
+          "timestamp": "2026-01-28T20:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "GRADING",
+            "location": "Green Farm - Processing",
+            "description": "Grade A: 400kg, Grade B: 100kg",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000074b20578"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "GRADING",
+        "location": "Green Farm - Processing"
+      },
+      "hash": "000000005afc0cf6"
+    },
+    {
+      "blockNumber": 13,
+      "timestamp": "2026-01-28T21:00:00.000Z",
+      "previousHash": "000000005afc0cf6",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0013",
+          "timestamp": "2026-01-28T21:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "PACKAGING",
+            "location": "Green Farm - Packaging",
+            "description": "Packed in 10kg boxes - 40 boxes",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000037e0ac20"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "PACKAGING",
+        "location": "Green Farm - Packaging"
+      },
+      "hash": "000000005b22f17e"
+    },
+    {
+      "blockNumber": 14,
+      "timestamp": "2026-01-28T22:00:00.000Z",
+      "previousHash": "000000005b22f17e",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0014",
+          "timestamp": "2026-01-28T22:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "QUALITY_CERT",
+            "location": "Green Farm - Office",
+            "description": "Organic certification verified",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000004619fd34"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "QUALITY_CERT",
+        "location": "Green Farm - Office"
+      },
+      "hash": "000000005aa1fcbe"
+    },
+    {
+      "blockNumber": 15,
+      "timestamp": "2026-01-28T23:00:00.000Z",
+      "previousHash": "000000005aa1fcbe",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0015",
+          "timestamp": "2026-01-28T23:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "STORAGE",
+            "location": "Green Farm - Cold Storage",
+            "description": "Stored at 4°C, humidity 85%",
+            "actor": "Green Farm Staff",
+            "temperature": "4°C",
+            "humidity": "85%"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "00000000613650ff"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "STORAGE",
+        "location": "Green Farm - Cold Storage"
+      },
+      "hash": "0000000070660e6b"
+    },
+    {
+      "blockNumber": 16,
+      "timestamp": "2026-01-29T00:00:00.000Z",
+      "previousHash": "0000000070660e6b",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0016",
+          "timestamp": "2026-01-29T00:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "SHIPMENT_PREP",
+            "location": "Green Farm - Logistics",
+            "description": "Prepared for shipment",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000027a228f5"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "SHIPMENT_PREP",
+        "location": "Green Farm - Logistics"
+      },
+      "hash": "0000000068bfaedf"
+    },
+    {
+      "blockNumber": 17,
+      "timestamp": "2026-01-29T01:00:00.000Z",
+      "previousHash": "0000000068bfaedf",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0017",
+          "timestamp": "2026-01-29T01:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "LOADING",
+            "location": "Green Farm - Loading Dock",
+            "description": "40 boxes loaded to truck TC-1234",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000030cef587"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "LOADING",
+        "location": "Green Farm - Loading Dock"
+      },
+      "hash": "000000000d7e8e87"
+    },
+    {
+      "blockNumber": 18,
+      "timestamp": "2026-01-29T02:00:00.000Z",
+      "previousHash": "000000000d7e8e87",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0018",
+          "timestamp": "2026-01-29T02:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "TRANSIT_START",
+            "location": "Highway 101 North",
+            "description": "In transit to distribution center",
+            "actor": "Green Farm Staff",
+            "temperature": "4°C",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000001227a1ef"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "TRANSIT_START",
+        "location": "Highway 101 North"
+      },
+      "hash": "0000000043af7cf4"
+    },
+    {
+      "blockNumber": 19,
+      "timestamp": "2026-01-29T03:00:00.000Z",
+      "previousHash": "0000000043af7cf4",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0019",
+          "timestamp": "2026-01-29T03:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "CHECKPOINT",
+            "location": "Distribution Hub A",
+            "description": "Temperature check - All good",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "0000000015720aa5"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "CHECKPOINT",
+        "location": "Distribution Hub A"
+      },
+      "hash": "00000000600db889"
+    },
+    {
+      "blockNumber": 20,
+      "timestamp": "2026-01-29T04:00:00.000Z",
+      "previousHash": "00000000600db889",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0020",
+          "timestamp": "2026-01-29T04:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "ARRIVAL",
+            "location": "Central Distribution Center",
+            "description": "Arrived at distribution center",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "000000002d068eb1"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "ARRIVAL",
+        "location": "Central Distribution Center"
+      },
+      "hash": "000000002fcc5f96"
+    },
+    {
+      "blockNumber": 21,
+      "timestamp": "2026-01-29T05:00:00.000Z",
+      "previousHash": "000000002fcc5f96",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0021",
+          "timestamp": "2026-01-29T05:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "FINAL_INSPECTION",
+            "location": "Distribution Center",
+            "description": "Final quality inspection passed",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "00000000610de066"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "FINAL_INSPECTION",
+        "location": "Distribution Center"
+      },
+      "hash": "000000004e46ee19"
+    },
+    {
+      "blockNumber": 22,
+      "timestamp": "2026-01-29T06:00:00.000Z",
+      "previousHash": "000000004e46ee19",
+      "transactions": [
+        {
+          "txId": "TX-ORANGE-0022",
+          "timestamp": "2026-01-29T06:00:00.000Z",
+          "product": {
+            "id": "ORG-GF-2026-001",
+            "name": "Fresh Organic Oranges",
+            "category": "Citrus Fruit",
+            "variety": "Valencia Orange",
+            "quantity": "500 kg",
+            "farm": "Green Farm",
+            "farmLocation": "California, USA",
+            "farmCertification": "USDA Organic",
+            "harvestDate": "2026-01-28"
+          },
+          "event": {
+            "type": "RETAIL_DELIVERY",
+            "location": "Fresh Market Retail Store",
+            "description": "Delivered to retail store - Ready for sale",
+            "actor": "Green Farm Staff",
+            "temperature": "Ambient",
+            "humidity": "Normal"
+          },
+          "metadata": {
+            "blockchainNetwork": "TraceRoot-Hyperledger",
+            "version": "1.0.0",
+            "verified": true
+          },
+          "signature": "00000000252fa43c"
+        }
+      ],
+      "validator": "Green Farm Node",
+      "data": {
+        "productId": "ORG-GF-2026-001",
+        "eventType": "RETAIL_DELIVERY",
+        "location": "Fresh Market Retail Store"
+      },
+      "hash": "00000000067b4f82"
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+
+╔════════════════════════════════════════════════════════════════════╗
+║          TRACEROOT BLOCKCHAIN - ORANGE SUPPLY CHAIN REPORT         ║
+╚════════════════════════════════════════════════════════════════════╝
+
+Product: Fresh Organic Oranges (Valencia)
+Farm: Green Farm, California, USA
+Certification: USDA Organic
+Date: January 28, 2026
+Product ID: ORG-GF-2026-001
+Quantity: 500 kg
+
+═══════════════════════════════════════════════════════════════════════
+
+BLOCKCHAIN SUMMARY:
+─────────────────────────────────────────────────────────────────────
+Total Blocks: 23
+Total Transactions: 22
+Chain Status: Valid ✓
+Network: TraceRoot-Hyperledger
+Genesis Block: 000000004fab175f
+Latest Block: 00000000067b4f82
+
+═══════════════════════════════════════════════════════════════════════
+
+SUPPLY CHAIN JOURNEY:
+─────────────────────────────────────────────────────────────────────
+
+Block #0 - GENESIS BLOCK
+  Time: 2026-01-28T08:00:00.000Z
+  Hash: 000000004fab175f
+  Status: TraceRoot Blockchain Initialized
+
+Block #1 - FARM_REGISTRATION
+  Time: 2026-01-28T09:00:00.000Z
+  Location: Green Farm, California
+  Description: Farm registered in system
+  Transaction ID: TX-ORANGE-0001
+  Block Hash: 0000000073d4d24a
+  Temperature: Ambient
+  Verified: ✓
+
+Block #2 - SEED_PLANTING
+  Time: 2026-01-28T10:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Orange tree seeds planted
+  Transaction ID: TX-ORANGE-0002
+  Block Hash: 000000007d777024
+  Temperature: Ambient
+  Verified: ✓
+
+Block #3 - WATERING
+  Time: 2026-01-28T11:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Trees watered - 500L water used
+  Transaction ID: TX-ORANGE-0003
+  Block Hash: 000000005d84a505
+  Temperature: Ambient
+  Verified: ✓
+
+Block #4 - FERTILIZER
+  Time: 2026-01-28T12:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Organic fertilizer applied
+  Transaction ID: TX-ORANGE-0004
+  Block Hash: 000000003b77d3f8
+  Temperature: Ambient
+  Verified: ✓
+
+Block #5 - GROWTH_INSPECTION
+  Time: 2026-01-28T13:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Trees inspected - healthy growth
+  Transaction ID: TX-ORANGE-0005
+  Block Hash: 00000000425185cd
+  Temperature: Ambient
+  Verified: ✓
+
+Block #6 - PEST_CONTROL
+  Time: 2026-01-28T14:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Organic pest control applied
+  Transaction ID: TX-ORANGE-0006
+  Block Hash: 000000006ec5b567
+  Temperature: Ambient
+  Verified: ✓
+
+Block #7 - QUALITY_CHECK
+  Time: 2026-01-28T15:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Quality inspection - Grade A
+  Transaction ID: TX-ORANGE-0007
+  Block Hash: 000000005e53cd96
+  Temperature: Ambient
+  Verified: ✓
+
+Block #8 - HARVEST_START
+  Time: 2026-01-28T16:00:00.000Z
+  Location: Green Farm - Field A
+  Description: Harvest season started
+  Transaction ID: TX-ORANGE-0008
+  Block Hash: 000000002b47f388
+  Temperature: Ambient
+  Verified: ✓
+
+Block #9 - PICKING
+  Time: 2026-01-28T17:00:00.000Z
+  Location: Green Farm - Field A
+  Description: 500kg oranges picked
+  Transaction ID: TX-ORANGE-0009
+  Block Hash: 000000000dc10db4
+  Temperature: Ambient
+  Verified: ✓
+
+Block #10 - SORTING
+  Time: 2026-01-28T18:00:00.000Z
+  Location: Green Farm - Sorting Facility
+  Description: Oranges sorted by size and quality
+  Transaction ID: TX-ORANGE-0010
+  Block Hash: 00000000494e411a
+  Temperature: Ambient
+  Verified: ✓
+
+Block #11 - WASHING
+  Time: 2026-01-28T19:00:00.000Z
+  Location: Green Farm - Processing
+  Description: Oranges washed and cleaned
+  Transaction ID: TX-ORANGE-0011
+  Block Hash: 00000000018cce5f
+  Temperature: Ambient
+  Verified: ✓
+
+Block #12 - GRADING
+  Time: 2026-01-28T20:00:00.000Z
+  Location: Green Farm - Processing
+  Description: Grade A: 400kg, Grade B: 100kg
+  Transaction ID: TX-ORANGE-0012
+  Block Hash: 000000005afc0cf6
+  Temperature: Ambient
+  Verified: ✓
+
+Block #13 - PACKAGING
+  Time: 2026-01-28T21:00:00.000Z
+  Location: Green Farm - Packaging
+  Description: Packed in 10kg boxes - 40 boxes
+  Transaction ID: TX-ORANGE-0013
+  Block Hash: 000000005b22f17e
+  Temperature: Ambient
+  Verified: ✓
+
+Block #14 - QUALITY_CERT
+  Time: 2026-01-28T22:00:00.000Z
+  Location: Green Farm - Office
+  Description: Organic certification verified
+  Transaction ID: TX-ORANGE-0014
+  Block Hash: 000000005aa1fcbe
+  Temperature: Ambient
+  Verified: ✓
+
+Block #15 - STORAGE
+  Time: 2026-01-28T23:00:00.000Z
+  Location: Green Farm - Cold Storage
+  Description: Stored at 4°C, humidity 85%
+  Transaction ID: TX-ORANGE-0015
+  Block Hash: 0000000070660e6b
+  Temperature: 4°C
+  Humidity: 85%
+  Verified: ✓
+
+Block #16 - SHIPMENT_PREP
+  Time: 2026-01-29T00:00:00.000Z
+  Location: Green Farm - Logistics
+  Description: Prepared for shipment
+  Transaction ID: TX-ORANGE-0016
+  Block Hash: 0000000068bfaedf
+  Temperature: Ambient
+  Verified: ✓
+
+Block #17 - LOADING
+  Time: 2026-01-29T01:00:00.000Z
+  Location: Green Farm - Loading Dock
+  Description: 40 boxes loaded to truck TC-1234
+  Transaction ID: TX-ORANGE-0017
+  Block Hash: 000000000d7e8e87
+  Temperature: Ambient
+  Verified: ✓
+
+Block #18 - TRANSIT_START
+  Time: 2026-01-29T02:00:00.000Z
+  Location: Highway 101 North
+  Description: In transit to distribution center
+  Transaction ID: TX-ORANGE-0018
+  Block Hash: 0000000043af7cf4
+  Temperature: 4°C
+  Verified: ✓
+
+Block #19 - CHECKPOINT
+  Time: 2026-01-29T03:00:00.000Z
+  Location: Distribution Hub A
+  Description: Temperature check - All good
+  Transaction ID: TX-ORANGE-0019
+  Block Hash: 00000000600db889
+  Temperature: Ambient
+  Verified: ✓
+
+Block #20 - ARRIVAL
+  Time: 2026-01-29T04:00:00.000Z
+  Location: Central Distribution Center
+  Description: Arrived at distribution center
+  Transaction ID: TX-ORANGE-0020
+  Block Hash: 000000002fcc5f96
+  Temperature: Ambient
+  Verified: ✓
+
+Block #21 - FINAL_INSPECTION
+  Time: 2026-01-29T05:00:00.000Z
+  Location: Distribution Center
+  Description: Final quality inspection passed
+  Transaction ID: TX-ORANGE-0021
+  Block Hash: 000000004e46ee19
+  Temperature: Ambient
+  Verified: ✓
+
+Block #22 - RETAIL_DELIVERY
+  Time: 2026-01-29T06:00:00.000Z
+  Location: Fresh Market Retail Store
+  Description: Delivered to retail store - Ready for sale
+  Transaction ID: TX-ORANGE-0022
+  Block Hash: 00000000067b4f82
+  Temperature: Ambient
+  Verified: ✓
+
+═══════════════════════════════════════════════════════════════════════
+
+VERIFICATION:
+─────────────────────────────────────────────────────────────────────
+✓ All blocks are linked with valid hashes
+✓ All transactions have valid signatures
+✓ Product traceability is complete
+✓ Supply chain integrity verified
+✓ Organic certification validated
+
+═══════════════════════════════════════════════════════════════════════
+
+Generated: 1/29/2026, 12:52:55 PM
+System: TraceRoot Blockchain v1.0.0

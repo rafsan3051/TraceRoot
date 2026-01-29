@@ -1,0 +1,183 @@
+{
+  "chainInfo": {
+    "totalBlocks": 23,
+    "totalTransactions": 22,
+    "product": "Fresh Organic Oranges",
+    "farm": "Green Farm",
+    "date": "January 28, 2026",
+    "created": "2026-01-29T06:52:55.448Z"
+  },
+  "statistics": {
+    "blockHeight": 22,
+    "firstBlock": "2026-01-28T08:00:00.000Z",
+    "lastBlock": "2026-01-29T06:00:00.000Z",
+    "averageBlockTime": "1 hour",
+    "chainIntegrity": "Valid"
+  },
+  "productDetails": {
+    "id": "ORG-GF-2026-001",
+    "name": "Fresh Organic Oranges",
+    "quantity": "500 kg",
+    "variety": "Valencia Orange",
+    "farm": "Green Farm",
+    "location": "California, USA",
+    "certification": "USDA Organic",
+    "harvestDate": "2026-01-28"
+  },
+  "supplyChainJourney": [
+    {
+      "step": 1,
+      "type": "FARM_REGISTRATION",
+      "location": "Green Farm, California",
+      "description": "Farm registered in system",
+      "timestamp": "2026-01-28T09:00:00.000Z"
+    },
+    {
+      "step": 2,
+      "type": "SEED_PLANTING",
+      "location": "Green Farm - Field A",
+      "description": "Orange tree seeds planted",
+      "timestamp": "2026-01-28T10:00:00.000Z"
+    },
+    {
+      "step": 3,
+      "type": "WATERING",
+      "location": "Green Farm - Field A",
+      "description": "Trees watered - 500L water used",
+      "timestamp": "2026-01-28T11:00:00.000Z"
+    },
+    {
+      "step": 4,
+      "type": "FERTILIZER",
+      "location": "Green Farm - Field A",
+      "description": "Organic fertilizer applied",
+      "timestamp": "2026-01-28T12:00:00.000Z"
+    },
+    {
+      "step": 5,
+      "type": "GROWTH_INSPECTION",
+      "location": "Green Farm - Field A",
+      "description": "Trees inspected - healthy growth",
+      "timestamp": "2026-01-28T13:00:00.000Z"
+    },
+    {
+      "step": 6,
+      "type": "PEST_CONTROL",
+      "location": "Green Farm - Field A",
+      "description": "Organic pest control applied",
+      "timestamp": "2026-01-28T14:00:00.000Z"
+    },
+    {
+      "step": 7,
+      "type": "QUALITY_CHECK",
+      "location": "Green Farm - Field A",
+      "description": "Quality inspection - Grade A",
+      "timestamp": "2026-01-28T15:00:00.000Z"
+    },
+    {
+      "step": 8,
+      "type": "HARVEST_START",
+      "location": "Green Farm - Field A",
+      "description": "Harvest season started",
+      "timestamp": "2026-01-28T16:00:00.000Z"
+    },
+    {
+      "step": 9,
+      "type": "PICKING",
+      "location": "Green Farm - Field A",
+      "description": "500kg oranges picked",
+      "timestamp": "2026-01-28T17:00:00.000Z"
+    },
+    {
+      "step": 10,
+      "type": "SORTING",
+      "location": "Green Farm - Sorting Facility",
+      "description": "Oranges sorted by size and quality",
+      "timestamp": "2026-01-28T18:00:00.000Z"
+    },
+    {
+      "step": 11,
+      "type": "WASHING",
+      "location": "Green Farm - Processing",
+      "description": "Oranges washed and cleaned",
+      "timestamp": "2026-01-28T19:00:00.000Z"
+    },
+    {
+      "step": 12,
+      "type": "GRADING",
+      "location": "Green Farm - Processing",
+      "description": "Grade A: 400kg, Grade B: 100kg",
+      "timestamp": "2026-01-28T20:00:00.000Z"
+    },
+    {
+      "step": 13,
+      "type": "PACKAGING",
+      "location": "Green Farm - Packaging",
+      "description": "Packed in 10kg boxes - 40 boxes",
+      "timestamp": "2026-01-28T21:00:00.000Z"
+    },
+    {
+      "step": 14,
+      "type": "QUALITY_CERT",
+      "location": "Green Farm - Office",
+      "description": "Organic certification verified",
+      "timestamp": "2026-01-28T22:00:00.000Z"
+    },
+    {
+      "step": 15,
+      "type": "STORAGE",
+      "location": "Green Farm - Cold Storage",
+      "description": "Stored at 4°C, humidity 85%",
+      "timestamp": "2026-01-28T23:00:00.000Z"
+    },
+    {
+      "step": 16,
+      "type": "SHIPMENT_PREP",
+      "location": "Green Farm - Logistics",
+      "description": "Prepared for shipment",
+      "timestamp": "2026-01-29T00:00:00.000Z"
+    },
+    {
+      "step": 17,
+      "type": "LOADING",
+      "location": "Green Farm - Loading Dock",
+      "description": "40 boxes loaded to truck TC-1234",
+      "timestamp": "2026-01-29T01:00:00.000Z"
+    },
+    {
+      "step": 18,
+      "type": "TRANSIT_START",
+      "location": "Highway 101 North",
+      "description": "In transit to distribution center",
+      "timestamp": "2026-01-29T02:00:00.000Z"
+    },
+    {
+      "step": 19,
+      "type": "CHECKPOINT",
+      "location": "Distribution Hub A",
+      "description": "Temperature check - All good",
+      "timestamp": "2026-01-29T03:00:00.000Z"
+    },
+    {
+      "step": 20,
+      "type": "ARRIVAL",
+      "location": "Central Distribution Center",
+      "description": "Arrived at distribution center",
+      "timestamp": "2026-01-29T04:00:00.000Z"
+    },
+    {
+      "step": 21,
+      "type": "FINAL_INSPECTION",
+      "location": "Distribution Center",
+      "description": "Final quality inspection passed",
+      "timestamp": "2026-01-29T05:00:00.000Z"
+    },
+    {
+      "step": 22,
+      "type": "RETAIL_DELIVERY",
+      "location": "Fresh Market Retail Store",
+      "description": "Delivered to retail store - Ready for sale",
+      "timestamp": "2026-01-29T06:00:00.000Z"
+    }
+  ]
+}
