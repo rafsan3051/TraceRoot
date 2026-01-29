@@ -3,7 +3,7 @@
  * Use this for Standard Blockchain Service (not FireFly)
  */
 
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: '.env' })
 const { Gateway, Wallets } = require('fabric-network')
 const fs = require('fs')
 const path = require('path')

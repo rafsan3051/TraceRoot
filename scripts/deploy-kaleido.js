@@ -6,7 +6,7 @@ const { Gateway, Wallets } = require('fabric-network')
 const fs = require('fs')
 const path = require('path')
 
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: '.env' })
 
 const connectionProfilePath = path.resolve(__dirname, '../fabric-network/connection-profile-kaleido.json')
 const walletPath = path.resolve(__dirname, '../wallet')

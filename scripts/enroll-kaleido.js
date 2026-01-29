@@ -9,7 +9,7 @@ const fs = require('fs')
 const path = require('path')
 
 // Load environment variables
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: '.env' })
 
 const connectionProfilePath = path.resolve(__dirname, '../fabric-network/connection-profile-kaleido.json')
 const walletPath = path.resolve(__dirname, '../wallet')
@@ -55,7 +55,7 @@ async function enrollAdmin() {
     
     const enrollment = await ca.enroll({
       enrollmentID: process.env.FABRIC_ADMIN_ID || 'admin',
-      enrollmentSecret: process.env.FABRIC_ADMIN_SECRET || 'adminpw' // Set FABRIC_ADMIN_SECRET in .env.local
+      enrollmentSecret: process.env.FABRIC_ADMIN_SECRET || 'adminpw' // Set FABRIC_ADMIN_SECRET in .env
     })
 
     const x509Identity = {

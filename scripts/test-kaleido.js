@@ -6,7 +6,7 @@ const { Gateway, Wallets } = require('fabric-network')
 const fs = require('fs')
 const path = require('path')
 
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: '.env' })
 
 const connectionProfilePath = path.resolve(__dirname, '../fabric-network/connection-profile-kaleido.json')
 const walletPath = path.resolve(__dirname, '../wallet')
@@ -40,7 +40,7 @@ async function testConnection() {
         ccp.certificateAuthorities[caKey].url = ccp.certificateAuthorities[caKey].url.replace('https://', `https://${APP_ID}:${APP_SECRET}@`)
       }
     } else {
-      console.warn('⚠️  KALEIDO_APP_ID/KALEIDO_APP_SECRET not set. Set them in .env.local')
+      console.warn('⚠️  KALEIDO_APP_ID/KALEIDO_APP_SECRET not set. Set them in .env')
     }
     console.log('✅ Connection profile loaded')
     console.log('   Organizations:', Object.keys(ccp.organizations))
@@ -79,7 +79,7 @@ async function testConnection() {
   } catch (error) {
     console.error('❌ Connection test failed:', error.message)
     console.log('\n💡 Troubleshooting:')
-    console.log('   1. Check your .env.local configuration')
+    console.log('   1. Check your .env configuration')
     console.log('   2. Verify Kaleido nodes are running')
     console.log('   3. Ensure you ran: npm run fabric:enroll:kaleido')
   }

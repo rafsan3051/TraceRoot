@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '.env.local' })
+require('dotenv').config({ path: '.env' })
 const { query } = require('../lib/fabric-rest')
 
 async function main() {

@@ -40,7 +40,7 @@
   },
   "certificateAuthorities": {
     "ca-u0d5lacfnl": {
-      "url": "https://u0qfg5wct0-u0d5lacfnl-fabric-ca.us0-aws.kaleido.io",
+      "url": "https://e1i8a4oupg-e1qxh6e0ac-fabric-ca.eu1-azure.kaleido.io",
       "caName": "TraceRoot CA",
       "httpOptions": {
         "verify": false
