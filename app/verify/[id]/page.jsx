@@ -197,10 +197,12 @@ export default function VerifyPage() {
 
           {product.blockchainTxId && (
             <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Blockchain Reference</p>
-              <p className="font-mono text-xs text-gray-700 dark:text-gray-300 break-all bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                {product.blockchainTxId}
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Blockchain Transaction ID</p>
+              <div className="font-mono text-xs text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-3 rounded">
+                <p className="break-anywhere">
+                  {product.blockchainTxId}
+                </p>
+              </div>
             </div>
           )}
 
@@ -214,6 +216,56 @@ export default function VerifyPage() {
             </div>
           )}
         </div>
+
+        {/* Supply Chain History */}
+        {events && events.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
+            <h3 className="text-2xl font-bold mb-6">Supply Chain History</h3>
+            <div className="space-y-4">
+              {events.map((event, index) => (
+                <div key={event.id || index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="font-semibold text-lg">{event.type || event.eventType}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {new Date(event.timestamp).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
+                  </div>
+                  
+                  {event.location && (
+                    <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                      <MapPin className="inline h-4 w-4 mr-1" />
+                      Location: {event.location}
+                    </div>
+                  )}
+                  
+                  {event.latitude && event.longitude && (
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                      📍 {event.latitude.toFixed(6)}, {event.longitude.toFixed(6)}
+                      {event.locationAccuracy && ` (±${Math.round(event.locationAccuracy)}m)`}
+                    </div>
+                  )}
+                  
+                  {event.blockchainTxId && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">TX:</div>
+                      <div className="font-mono text-xs text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                        <p className="break-anywhere">
+                          {event.blockchainTxId}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 {!checkingAuth && (
           isAuthenticated ? (
             <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">

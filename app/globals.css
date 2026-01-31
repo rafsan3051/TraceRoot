@@ -91,3 +91,12 @@
     line-height: 1.7;
   }
 }
+
+@layer utilities {
+  /* Force text to break and wrap properly - especially for long hashes */
+  .break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}

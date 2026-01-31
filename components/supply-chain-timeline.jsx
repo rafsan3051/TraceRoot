@@ -184,11 +184,11 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
 
                 {/* Blockchain info */}
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border">
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0 overflow-hidden">
                     <div className="text-xs text-muted-foreground mb-1">{t(locale, 'timeline.blockchainTransaction')}</div>
-                    <code className="text-xs font-mono break-all">{event.blockchainTxId}</code>
+                    <code className="text-xs font-mono break-all block">{event.blockchainTxId}</code>
                   </div>
-                  <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-medium">
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-medium flex-shrink-0">
                     <CheckCircle className="w-3 h-3" />
                     {t(locale, 'timeline.verified')}
                   </div>

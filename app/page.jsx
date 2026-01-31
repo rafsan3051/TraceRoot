@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { QrCode, Truck, Search } from 'lucide-react'
@@ -10,10 +11,15 @@ import { t } from '@/lib/i18n/translations'
 export default function Home() {
   const { user } = useAuth()
   const { locale } = useLocale()
+  const [mounted, setMounted] = useState(false)
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Define which actions are available based on user role
   const showRegisterProduct = user?.role === 'FARMER' && user?.verified
@@ -42,6 +48,24 @@ export default function Home() {
     }
   }
 
+  // Prevent hydration mismatch by not rendering locale-dependent content until mounted
+  if (!mounted) {
+    return (
+      <div className="space-y-12">
+        <section className="space-y-6">
+          <div className="text-center space-y-4 px-4">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500 break-words px-2 leading-tight sm:leading-tight md:leading-tight lg:leading-tight py-2">
+              TraceRoot
+            </h1>
+            <p className="mx-auto max-w-[90%] sm:max-w-[700px] text-muted-foreground text-base sm:text-lg md:text-xl px-2 leading-relaxed">
+              Loading...
+            </p>
+          </div>
+        </section>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-12">
       <motion.section 
@@ -56,10 +80,10 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 suppressHydrationWarning className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500 break-words px-2 leading-tight sm:leading-tight md:leading-tight lg:leading-tight py-2">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500 break-words px-2 leading-tight sm:leading-tight md:leading-tight lg:leading-tight py-2">
             {t(locale, 'home.hero.title')}
           </h1>
-          <p suppressHydrationWarning className="mx-auto max-w-[90%] sm:max-w-[700px] text-muted-foreground text-base sm:text-lg md:text-xl px-2 leading-relaxed">
+          <p className="mx-auto max-w-[90%] sm:max-w-[700px] text-muted-foreground text-base sm:text-lg md:text-xl px-2 leading-relaxed">
             {t(locale, 'home.hero.subtitle')}
           </p>
         </motion.div>

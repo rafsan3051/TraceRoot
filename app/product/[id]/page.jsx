@@ -167,8 +167,8 @@ export default async function ProductPage({ params }) {
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.blockchainReference')}</dt>
-              <dd className="text-sm font-mono">{product.blockchainTxId}</dd>
+              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.blockchainTransactionId')}</dt>
+              <dd className="text-sm font-mono break-anywhere">{product.blockchainTxId}</dd>
             </div>
           </dl>
 
@@ -212,7 +212,7 @@ export default async function ProductPage({ params }) {
                       {event.locationAccuracy && ` (±${Math.round(event.locationAccuracy)}m)`}
                     </p>
                   )}
-                  <p className="text-sm font-mono text-muted-foreground">
+                  <p className="text-sm font-mono text-muted-foreground break-anywhere">
                     {t(locale, 'common.txLabel')}: {event.blockchainTxId}
                   </p>
                 </div>
