@@ -51,11 +51,11 @@ export default function QrCodeCard({
         }
 
         const envBase = process.env.NEXT_PUBLIC_APP_URL
-        const browserBase = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : undefined
+        const browserBase = typeof window !== 'undefined' && window.location?.origin
+          ? window.location.origin
+          : undefined
 
-        const base = envBase && !isLocalHost(envBase)
-          ? envBase
-          : (browserBase && !isLocalHost(browserBase) ? browserBase : (envBase || browserBase || 'http://localhost:3000'))
+        const base = browserBase || envBase || 'http://localhost:3000'
 
         const v = typeof versionKey === 'string' ? encodeURIComponent(versionKey) : String(versionKey)
         setQrValue(`${base}/verify/${productId}?v=${v}`)
