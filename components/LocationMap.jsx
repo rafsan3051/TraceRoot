@@ -1,6 +1,8 @@
 'use client'
 
 import { MapPin, Navigation } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 /**
  * Component to display location information with a Google Maps link
@@ -11,6 +13,7 @@ import { MapPin, Navigation } from 'lucide-react'
  * @param {string} props.label - Label for the location (e.g., "Registration Location")
  */
 export default function LocationMap({ latitude, longitude, accuracy, label = 'Location' }) {
+  const { locale } = useLocale()
   if (!latitude || !longitude) {
     return null
   }
@@ -27,17 +30,17 @@ export default function LocationMap({ latitude, longitude, accuracy, label = 'Lo
       
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Latitude:</span>
+          <span className="text-muted-foreground">{t(locale, 'map.latitude')}:</span>
           <span className="font-mono">{latitude.toFixed(6)}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Longitude:</span>
+          <span className="text-muted-foreground">{t(locale, 'map.longitude')}:</span>
           <span className="font-mono">{longitude.toFixed(6)}</span>
         </div>
         {accuracy && (
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Accuracy:</span>
-            <span>±{Math.round(accuracy)} meters</span>
+            <span className="text-muted-foreground">{t(locale, 'map.accuracy')}:</span>
+            <span>±{Math.round(accuracy)} {t(locale, 'map.meters')}</span>
           </div>
         )}
       </div>
@@ -49,7 +52,7 @@ export default function LocationMap({ latitude, longitude, accuracy, label = 'Lo
         className="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors dark:bg-blue-950 dark:text-blue-400 dark:hover:bg-blue-900"
       >
         <Navigation className="h-4 w-4" />
-        View on Google Maps
+        {t(locale, 'map.viewOnGoogleMaps')}
       </a>
     </div>
   )

@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { Package, Truck, Store, CheckCircle, BadgeCheck, MapPin, Calendar } from 'lucide-react'
-import { format } from 'date-fns'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 const eventIcons = {
   REGISTERED: Package,
@@ -63,6 +64,27 @@ const eventStyles = {
 }
 
 export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, productBlockchainTxId }) {
+  const { locale } = useLocale()
+
+  const formatDateOnly = (date) => new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(new Date(date))
+
+  const formatTimeOnly = (date) => new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date))
+
+  const getEventTypeLabel = (eventType) => {
+    const translated = t(locale, `status.${eventType}`)
+    if (translated === `status.${eventType}`) {
+      return eventType.replace(/_/g, ' ')
+    }
+    return translated
+  }
+
   // Ensure events is an array
   const safeEvents = Array.isArray(events) ? events : []
   const sortedEvents = [...safeEvents].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
@@ -126,7 +148,7 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="text-xl font-bold mb-1">
-                      {event.eventType.replace(/_/g, ' ')}
+                      {getEventTypeLabel(event.eventType)}
                     </h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
@@ -136,10 +158,10 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
                   <div className="text-right">
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(event.timestamp), 'PPP')}
+                      {formatDateOnly(event.timestamp)}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      {format(new Date(event.timestamp), 'p')}
+                      {formatTimeOnly(event.timestamp)}
                     </div>
                   </div>
                 </div>
@@ -147,7 +169,7 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
                 {/* Progress indicator */}
                 <div className="mb-3">
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                    <span>Journey Progress</span>
+                    <span>{t(locale, 'timeline.journeyProgress')}</span>
                     <span>{Math.round(((index + 1) / allEvents.length) * 100)}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -163,19 +185,19 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
                 {/* Blockchain info */}
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border">
                   <div className="flex-1">
-                    <div className="text-xs text-muted-foreground mb-1">Blockchain Transaction</div>
+                    <div className="text-xs text-muted-foreground mb-1">{t(locale, 'timeline.blockchainTransaction')}</div>
                     <code className="text-xs font-mono break-all">{event.blockchainTxId}</code>
                   </div>
                   <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 text-xs font-medium">
                     <CheckCircle className="w-3 h-3" />
-                    Verified
+                    {t(locale, 'timeline.verified')}
                   </div>
                 </div>
 
                 {/* Additional metadata if available */}
                 {event.metadata && (
                   <div className="mt-3 pt-3 border-t">
-                    <div className="text-xs text-muted-foreground">Additional Information</div>
+                    <div className="text-xs text-muted-foreground">{t(locale, 'timeline.additionalInfo')}</div>
                     <pre className="text-xs mt-1 p-2 bg-muted rounded">{JSON.stringify(event.metadata, null, 2)}</pre>
                   </div>
                 )}
@@ -188,7 +210,7 @@ export function SupplyChainTimeline({ events, productOrigin, productCreatedAt, p
                     transition={{ delay: index * 0.1 + 0.7 }}
                     className="absolute -top-2 -right-2 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold shadow-lg"
                   >
-                    Current Status
+                    {t(locale, 'timeline.currentStatus')}
                   </motion.div>
                 )}
               </motion.div>

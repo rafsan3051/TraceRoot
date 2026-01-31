@@ -18,13 +18,44 @@ export async function GET(request, { params }) {
     console.log('🔍 Verify API called for product ID:', id)
 
     // Fetch product with includes
-    const product = await prisma.product.findUnique({
+    // Try direct ID first
+    let product = await prisma.product.findUnique({
       where: { id },
       include: {
         farmer: true,
         events: true
       }
     })
+
+    // If not found by ID, try blockchain reference
+    if (!product) {
+      product = await prisma.product.findUnique({
+        where: { blockchainTxId: id },
+        include: {
+          farmer: true,
+          events: true
+        }
+      })
+    }
+
+    // If still not found, search in events
+    if (!product) {
+      const event = await prisma.event.findFirst({
+        where: { blockchainTxId: id }
+      })
+      if (event) {
+        product = await prisma.product.findUnique({
+          where: { id: event.productId },
+          include: {
+            farmer: true,
+            events: true
+          }
+        })
+      }
+    }
+
+    if (!product) {}
+    const product_final = product
 
     console.log('📦 Product found:', product ? 'Yes' : 'No')
     if (product) {

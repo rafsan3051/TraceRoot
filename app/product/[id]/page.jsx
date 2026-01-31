@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma'
 import { notFound, redirect } from 'next/navigation'
-import { format } from 'date-fns'
+import { cookies } from 'next/headers'
 import QrCodeCard from '@/components/qr-code-card'
 import WatchButton from '@/components/watch-button'
 import DeleteProductButton from '@/components/delete-product-button'
@@ -10,9 +10,11 @@ import { SupplyChainMap } from '@/components/supply-chain-map'
 import LocationMap from '@/components/LocationMap'
 import { getSession } from '@/lib/auth/auth-utils'
 import PriceHistory from '@/components/price-history'
+import { t } from '@/lib/i18n/translations'
 
 async function getProduct(id) {
-  const product = await prisma.product.findUnique({
+  // Try direct ID first
+  let product = await prisma.product.findUnique({
     where: { id },
     include: {
       events: {
@@ -22,6 +24,39 @@ async function getProduct(id) {
       }
     }
   })
+
+  // If not found by ID, try blockchain reference
+  if (!product) {
+    product = await prisma.product.findUnique({
+      where: { blockchainTxId: id },
+      include: {
+        events: {
+          orderBy: {
+            timestamp: 'desc'
+          }
+        }
+      }
+    })
+  }
+
+  // If still not found, search in events
+  if (!product) {
+    const event = await prisma.event.findFirst({
+      where: { blockchainTxId: id }
+    })
+    if (event) {
+      product = await prisma.product.findUnique({
+        where: { id: event.productId },
+        include: {
+          events: {
+            orderBy: {
+              timestamp: 'desc'
+            }
+          }
+        }
+      })
+    }
+  }
 
   if (!product) {
     notFound()
@@ -49,20 +84,40 @@ export default async function ProductPage({ params }) {
   const session = await getSession()
   const resolvedParams = await params
   const product = await getProduct(resolvedParams.id)
+  const cookieStore = await cookies()
+  const locale = cookieStore.get?.('locale')?.value || 'en-BD'
+
+  const formatDateOnly = (date) => new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(new Date(date))
+
+  const formatDateTime = (date) => new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date))
+
+  if (product.id !== resolvedParams.id) {
+    redirect(`/product/${product.id}`)
+  }
 
   if (!session) {
     return (
         <div className="container mx-auto px-4 py-8 sm:py-16 text-center max-w-2xl">
           <h1 className="text-2xl sm:text-3xl font-bold mb-4">{product.name}</h1>
           <div className="p-6 sm:p-8 rounded-xl border-2 border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-red-500/5">
-            <h2 className="text-lg sm:text-xl font-semibold mb-2">Login Required</h2>
-            <p className="text-sm sm:text-base text-muted-foreground mb-6">You must login or register to view product details and supply chain history.</p>
+            <h2 className="text-lg sm:text-xl font-semibold mb-2">{t(locale, 'auth.loginRequiredTitle')}</h2>
+            <p className="text-sm sm:text-base text-muted-foreground mb-6">{t(locale, 'auth.loginRequiredMessage')}</p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <a href={`/auth?redirect=/product/${product.id}`} className="px-6 py-3 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition text-sm sm:text-base">Login</a>
-              <a href={`/auth/register?redirect=/product/${product.id}`} className="px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition text-sm sm:text-base">Register</a>
+              <a href={`/auth?redirect=/product/${product.id}`} className="px-6 py-3 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition text-sm sm:text-base">{t(locale, 'auth.login')}</a>
+              <a href={`/auth/register?redirect=/product/${product.id}`} className="px-6 py-3 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition text-sm sm:text-base">{t(locale, 'auth.register')}</a>
           </div>
         </div>
-          <div className="mt-6 sm:mt-8 text-muted-foreground text-xs sm:text-sm">Only product name is visible to guests.</div>
+          <div className="mt-6 sm:mt-8 text-muted-foreground text-xs sm:text-sm">{t(locale, 'auth.onlyNameVisible')}</div>
       </div>
     )
   }
@@ -72,7 +127,7 @@ export default async function ProductPage({ params }) {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div className="space-y-2 flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Product Details and History</p>
+            <p className="text-sm sm:text-base text-muted-foreground">{t(locale, 'product.detailsAndHistory')}</p>
             <div className="pt-2 space-y-2">
               <WatchButton productId={product.id} compact={false} />
               <div className="pt-2 sm:pt-0">
@@ -93,26 +148,26 @@ export default async function ProductPage({ params }) {
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-4">
-            <h2 className="text-lg sm:text-xl font-semibold">Product Information</h2>
+            <h2 className="text-lg sm:text-xl font-semibold">{t(locale, 'product.productInformation')}</h2>
           <dl className="space-y-2">
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">Origin</dt>
+              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.origin')}</dt>
               <dd className="text-lg">{product.origin}</dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">Manufacture Date</dt>
+              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.manufactureDate')}</dt>
               <dd className="text-lg">
-                {format(new Date(product.manufactureDate), 'PPP')}
+                {formatDateOnly(product.manufactureDate)}
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">Registration Date</dt>
+              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.registrationDate')}</dt>
               <dd className="text-lg">
-                {format(new Date(product.createdAt), 'PPP')}
+                {formatDateOnly(product.createdAt)}
               </dd>
             </div>
             <div>
-              <dt className="text-sm font-medium text-muted-foreground">Blockchain Reference</dt>
+              <dt className="text-sm font-medium text-muted-foreground">{t(locale, 'product.blockchainReference')}</dt>
               <dd className="text-sm font-mono">{product.blockchainTxId}</dd>
             </div>
           </dl>
@@ -129,14 +184,14 @@ export default async function ProductPage({ params }) {
                 latitude={product.latitude}
                 longitude={product.longitude}
                 accuracy={product.locationAccuracy}
-                label="Registration Location"
+                label={t(locale, 'product.registrationLocation')}
               />
             </div>
           )}
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Supply Chain History</h2>
+          <h2 className="text-xl font-semibold">{t(locale, 'product.supplyChainHistory')}</h2>
           <div className="space-y-4">
             {product.events.length > 0 ? (
               product.events.map((event) => (
@@ -147,10 +202,10 @@ export default async function ProductPage({ params }) {
                   <div className="flex justify-between items-start">
                     <h3 className="font-semibold">{event.eventType}</h3>
                     <span className="text-sm text-muted-foreground">
-                      {format(new Date(event.timestamp), 'PPp')}
+                      {formatDateTime(event.timestamp)}
                     </span>
                   </div>
-                  <p className="text-muted-foreground">Location: {event.location}</p>
+                  <p className="text-muted-foreground">{t(locale, 'timeline.location')}: {event.location}</p>
                   {event.latitude && event.longitude && (
                     <p className="text-sm text-muted-foreground">
                       📍 {event.latitude.toFixed(6)}, {event.longitude.toFixed(6)}
@@ -158,12 +213,12 @@ export default async function ProductPage({ params }) {
                     </p>
                   )}
                   <p className="text-sm font-mono text-muted-foreground">
-                    TX: {event.blockchainTxId}
+                    {t(locale, 'common.txLabel')}: {event.blockchainTxId}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground">No supply chain events recorded yet.</p>
+              <p className="text-muted-foreground">{t(locale, 'timeline.noEvents')}</p>
             )}
           </div>
         </div>
@@ -172,7 +227,7 @@ export default async function ProductPage({ params }) {
       {/* Visual Supply Chain Journey */}
       <div className="space-y-6">
         <div className="border-t pt-8">
-          <h2 className="text-2xl font-bold mb-6">Supply Chain Journey</h2>
+          <h2 className="text-2xl font-bold mb-6">{t(locale, 'product.supplyChainJourney')}</h2>
           <SupplyChainTimeline 
             events={product.events}
             productOrigin={product.origin}
@@ -182,7 +237,7 @@ export default async function ProductPage({ params }) {
         </div>
         
         <div className="border-t pt-8">
-          <h2 className="text-2xl font-bold mb-6">Journey Map</h2>
+          <h2 className="text-2xl font-bold mb-6">{t(locale, 'product.journeyMap')}</h2>
           <SupplyChainMap 
             events={product.events}
             productOrigin={product.origin}

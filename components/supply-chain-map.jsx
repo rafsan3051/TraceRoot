@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { MapPin, ArrowRight, Milestone } from 'lucide-react'
-import { format } from 'date-fns'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 const locationColors = [
   'from-blue-500 to-cyan-500',
@@ -14,6 +15,27 @@ const locationColors = [
 ]
 
 export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
+  const { locale } = useLocale()
+
+  const formatDateShort = (date) => new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }).format(new Date(date))
+
+  const formatTimeOnly = (date) => new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date))
+
+  const getEventTypeLabel = (eventType) => {
+    const translated = t(locale, `status.${eventType}`)
+    if (translated === `status.${eventType}`) {
+      return eventType.replace(/_/g, ' ')
+    }
+    return translated
+  }
+
   // Ensure events is an array
   const safeEvents = Array.isArray(events) ? events : []
   const sortedEvents = [...safeEvents].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
@@ -63,13 +85,13 @@ export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
             <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-500">
               {uniqueLocations.length}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Locations Visited</div>
+            <div className="text-sm text-muted-foreground mt-1">{t(locale, 'map.locationsVisited')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
               {locations.length}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Total Events</div>
+            <div className="text-sm text-muted-foreground mt-1">{t(locale, 'map.totalEvents')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-teal-500">
@@ -77,7 +99,7 @@ export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
                 ? Math.round((new Date(locations[locations.length - 1].timestamp) - new Date(locations[0].timestamp)) / (1000 * 60 * 60 * 24))
                 : 0}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Days in Transit</div>
+            <div className="text-sm text-muted-foreground mt-1">{t(locale, 'map.daysInTransit')}</div>
           </div>
         </div>
       </motion.div>
@@ -134,24 +156,24 @@ export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
                   <div className="flex items-center justify-center gap-1 mb-2">
                     <Milestone className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm text-muted-foreground">
-                      {loc.events.length} event{loc.events.length !== 1 ? 's' : ''}
+                      {loc.events.length} {loc.events.length !== 1 ? t(locale, 'map.eventPlural') : t(locale, 'map.eventSingular')}
                     </span>
                   </div>
 
                   {/* Timestamp */}
                   <div className="text-xs text-center text-muted-foreground">
-                    {format(new Date(loc.firstTimestamp), 'MMM d, yyyy')}
+                    {formatDateShort(loc.firstTimestamp)}
                   </div>
 
                   {/* Hover tooltip */}
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                     <div className="bg-popover border rounded-lg shadow-xl p-3 min-w-[200px]">
-                      <div className="text-xs font-semibold mb-2">Events at this location:</div>
+                      <div className="text-xs font-semibold mb-2">{t(locale, 'map.eventsAtLocation')}</div>
                       <div className="space-y-1">
                         {loc.events.map((event, i) => (
                           <div key={i} className="text-xs flex justify-between gap-2">
-                            <span className="font-medium">{event.eventType.replace(/_/g, ' ')}</span>
-                            <span className="text-muted-foreground">{format(new Date(event.timestamp), 'HH:mm')}</span>
+                            <span className="font-medium">{getEventTypeLabel(event.eventType)}</span>
+                            <span className="text-muted-foreground">{formatTimeOnly(event.timestamp)}</span>
                           </div>
                         ))}
                       </div>
@@ -177,18 +199,18 @@ export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
         >
           <div className="flex flex-wrap justify-around gap-4 text-center">
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Origin</div>
-              <div className="font-semibold">{uniqueLocations[0]?.location || 'N/A'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t(locale, 'map.origin')}</div>
+              <div className="font-semibold">{uniqueLocations[0]?.location || t(locale, 'map.notAvailable')}</div>
             </div>
             <div className="hidden md:block">
               <ArrowRight className="w-5 h-5 text-muted-foreground mt-3" />
             </div>
             <div>
-              <div className="text-xs text-muted-foreground mb-1">Current Location</div>
-              <div className="font-semibold">{uniqueLocations[uniqueLocations.length - 1]?.location || 'N/A'}</div>
+              <div className="text-xs text-muted-foreground mb-1">{t(locale, 'map.currentLocation')}</div>
+              <div className="font-semibold">{uniqueLocations[uniqueLocations.length - 1]?.location || t(locale, 'map.notAvailable')}</div>
             </div>
             <div className="hidden md:block">
-              <div className="text-xs text-muted-foreground mb-1">Distance Traveled</div>
+              <div className="text-xs text-muted-foreground mb-1">{t(locale, 'map.distanceTraveled')}</div>
               <div className="font-semibold text-blue-500">~{uniqueLocations.length * 150} km</div>
             </div>
           </div>
@@ -216,12 +238,12 @@ export function SupplyChainMap({ events, productOrigin, productCreatedAt }) {
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold truncate">{loc.location}</h4>
                   <div className="text-xs text-muted-foreground mt-1">
-                    {format(new Date(loc.firstTimestamp), 'PPP')}
+                    {formatDateShort(loc.firstTimestamp)}
                   </div>
                   <div className="mt-2 space-y-1">
                     {loc.events.map((event, i) => (
                       <div key={i} className="text-xs bg-muted px-2 py-1 rounded">
-                        {event.eventType.replace(/_/g, ' ')}
+                        {getEventTypeLabel(event.eventType)}
                       </div>
                     ))}
                   </div>

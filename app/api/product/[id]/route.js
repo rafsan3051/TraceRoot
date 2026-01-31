@@ -4,8 +4,9 @@ import prisma from '../../../../lib/prisma'
 export async function GET(request, { params }) {
   try {
     const { id } = await params
-    
-    const product = await prisma.product.findUnique({
+
+    // Try direct ID first
+    let product = await prisma.product.findUnique({
       where: { id },
       include: {
         farmer: {
@@ -24,6 +25,58 @@ export async function GET(request, { params }) {
         }
       }
     })
+
+    // If not found by ID, try blockchain reference
+    if (!product) {
+      product = await prisma.product.findUnique({
+        where: { blockchainTxId: id },
+        include: {
+          farmer: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              profileImage: true,
+              verified: true
+            }
+          },
+          events: {
+            orderBy: {
+              timestamp: 'desc'
+            }
+          }
+        }
+      })
+    }
+
+    // If still not found, search in events
+    if (!product) {
+      const event = await prisma.event.findFirst({
+        where: { blockchainTxId: id }
+      })
+      if (event) {
+        product = await prisma.product.findUnique({
+          where: { id: event.productId },
+          include: {
+            farmer: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                profileImage: true,
+                verified: true
+              }
+            },
+            events: {
+              orderBy: {
+                timestamp: 'desc'
+              }
+            }
+          }
+        })
+      }
+    }
+
 
     if (!product) {
       return NextResponse.json(

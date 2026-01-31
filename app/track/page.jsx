@@ -40,7 +40,7 @@ export default function TrackPage() {
     }
 
     if (!searchTerm.trim()) {
-      setError('Please enter a product ID or name')
+      setError('Please enter a product ID, name, origin, or blockchain reference')
       return
     }
 
@@ -51,7 +51,9 @@ export default function TrackPage() {
       // Try direct product ID first
       const directRes = await fetch(`/api/product/${searchTerm}`)
       if (directRes.ok) {
-        router.push(`/product/${searchTerm}`)
+        const directData = await directRes.json()
+        const resolvedId = directData?.product?.id || searchTerm
+        router.push(`/product/${resolvedId}`)
         return
       }
 
@@ -60,10 +62,13 @@ export default function TrackPage() {
       const data = await res.json()
       
       if (data.products) {
+        const term = searchTerm.toLowerCase()
         const found = data.products.find(p => 
           p.id === searchTerm ||
-          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.origin.toLowerCase().includes(searchTerm.toLowerCase())
+          p.blockchainTxId === searchTerm ||
+          p.name.toLowerCase().includes(term) ||
+          p.origin.toLowerCase().includes(term) ||
+          (p.events || []).some(event => event.blockchainTxId === searchTerm)
         )
 
         if (found) {
@@ -297,7 +302,7 @@ export default function TrackPage() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Enter Product ID or search by name..."
+                placeholder="Enter Product ID, name, origin, or blockchain reference..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value)

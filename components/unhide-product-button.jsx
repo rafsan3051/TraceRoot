@@ -4,10 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, CheckCircle } from 'lucide-react'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 export default function UnhideProductButton({ productId }) {
   const router = useRouter()
   const { user } = useAuth()
+  const { locale } = useLocale()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -43,17 +46,17 @@ export default function UnhideProductButton({ productId }) {
         onClick={handleUnhide}
         disabled={loading}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 transition text-sm font-medium border border-emerald-500/30 disabled:opacity-50"
-        title="Restore this product to public view"
+        title={t(locale, 'product.restoreProduct')}
       >
         {loading ? (
           <>
             <span className="h-4 w-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-            Restoring...
+            {t(locale, 'product.restoring')}
           </>
         ) : (
           <>
             <Eye className="h-4 w-4" />
-            Unhide Product
+            {t(locale, 'product.unhideProduct')}
           </>
         )}
       </button>

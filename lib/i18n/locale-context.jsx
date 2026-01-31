@@ -14,6 +14,12 @@ function getInitialLocale() {
   
   // Client-side reads from localStorage once
   try {
+    const cookieMatch = document.cookie.match(/(?:^|; )locale=([^;]+)/)
+    const cookieLocale = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null
+    if (cookieLocale === 'en-BD' || cookieLocale === 'bn-BD') {
+      return cookieLocale
+    }
+
     const saved = localStorage.getItem('locale')
     if (saved === 'en-BD' || saved === 'bn-BD') {
       return saved
@@ -32,6 +38,7 @@ export function LocaleProvider({ children }) {
     setLocaleState(newLocale)
     if (typeof window !== 'undefined') {
       localStorage.setItem('locale', newLocale)
+      document.cookie = `locale=${encodeURIComponent(newLocale)}; path=/; max-age=31536000`
     }
   }
 

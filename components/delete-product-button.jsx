@@ -4,10 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Trash2, AlertTriangle } from 'lucide-react'
 import { useAuth } from '@/lib/auth/auth-context'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 export default function DeleteProductButton({ productId, farmerId }) {
   const router = useRouter()
   const { user } = useAuth()
+  const { locale } = useLocale()
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -46,10 +49,10 @@ export default function DeleteProductButton({ productId, farmerId }) {
       <button
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-600 hover:bg-red-500/20 transition text-sm font-medium border border-red-500/30"
-        title="Hide this product from public view"
+        title={t(locale, 'product.hideProduct')}
       >
         <Trash2 className="h-4 w-4" />
-        Hide Product
+        {t(locale, 'product.hideProduct')}
       </button>
 
       {/* Modal */}
@@ -61,26 +64,24 @@ export default function DeleteProductButton({ productId, farmerId }) {
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <h2 className="text-lg font-bold">Hide Product?</h2>
-                <p className="text-sm text-muted-foreground">This action cannot be undone</p>
+                <h2 className="text-lg font-bold">{t(locale, 'product.hideProductTitle')}</h2>
+                <p className="text-sm text-muted-foreground">{t(locale, 'product.hideProductCannotUndo')}</p>
               </div>
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 space-y-2">
-              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-                ⚠️ Important Information
-              </p>
+              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">⚠️ {t(locale, 'product.importantInfo')}</p>
               <ul className="text-xs text-amber-800 dark:text-amber-300 space-y-1 list-disc list-inside">
-                <li>Product data remains on the blockchain permanently</li>
-                <li>Hiding only removes it from the public product list</li>
-                <li>Authorized users can still access via direct link</li>
-                <li>You can unhide the product later if needed</li>
+                <li>{t(locale, 'product.hideInfoPermanent')}</li>
+                <li>{t(locale, 'product.hideInfoListRemoval')}</li>
+                <li>{t(locale, 'product.hideInfoDirectAccess')}</li>
+                <li>{t(locale, 'product.hideInfoRestore')}</li>
               </ul>
             </div>
 
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
-                <p className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">Authorization Error</p>
+                <p className="text-sm font-semibold text-red-800 dark:text-red-300 mb-1">{t(locale, 'product.authorizationError')}</p>
                 <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
               </div>
             )}
@@ -91,7 +92,7 @@ export default function DeleteProductButton({ productId, farmerId }) {
                 disabled={loading}
                 className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition disabled:opacity-50"
               >
-                Cancel
+                {t(locale, 'common.cancel')}
               </button>
               <button
                 onClick={handleDelete}
@@ -101,12 +102,12 @@ export default function DeleteProductButton({ productId, farmerId }) {
                 {loading ? (
                   <>
                     <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Hiding...
+                    {t(locale, 'product.hiding')}
                   </>
                 ) : (
                   <>
                     <Trash2 className="h-4 w-4" />
-                    Yes, Hide Product
+                    {t(locale, 'product.yesHideProduct')}
                   </>
                 )}
               </button>

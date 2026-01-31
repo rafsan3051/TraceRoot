@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
+import { cookies } from 'next/headers'
 import { ThemeProvider } from '../components/theme-provider'
 import { AuthProvider } from '../lib/auth/auth-context'
 import { LocaleProvider } from '../lib/i18n/locale-context'
@@ -49,9 +50,11 @@ export const metadata = {
   }
 }
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const cookieStore = await cookies()
+  const locale = cookieStore.get?.('locale')?.value || 'en-BD'
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
           <LocaleProvider>

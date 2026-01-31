@@ -9,9 +9,12 @@ import { useState, useEffect } from 'react'
 import { Bell, BellOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/lib/auth/auth-context'
 import toast from 'react-hot-toast'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 export default function WatchButton({ productId, compact = false }) {
   const { user } = useAuth()
+  const { locale } = useLocale()
   const [isWatching, setIsWatching] = useState(false)
   const [loading, setLoading] = useState(false)
   const [notifyEmail, setNotifyEmail] = useState(true)
@@ -41,7 +44,7 @@ export default function WatchButton({ productId, compact = false }) {
 
   async function toggleWatch() {
     if (!user) {
-      toast.error('Please login to watch products')
+      toast.error(t(locale, 'messages.watchLoginRequired'))
       return
     }
 
@@ -56,7 +59,7 @@ export default function WatchButton({ productId, compact = false }) {
         
         if (res.ok) {
           setIsWatching(false)
-          toast.success('Product unwatched')
+          toast.success(t(locale, 'messages.watchRemoved'))
         }
       } else {
         // Watch
@@ -73,11 +76,11 @@ export default function WatchButton({ productId, compact = false }) {
         if (res.ok) {
           setIsWatching(true)
           setNotifyEmail(true)
-          toast.success('Product watched! You\'ll get notified of updates.')
+          toast.success(t(locale, 'messages.watchAdded'))
         }
       }
     } catch (error) {
-      toast.error('Failed to update watchlist')
+      toast.error(t(locale, 'messages.watchFailed'))
     } finally {
       setLoading(false)
     }
@@ -95,7 +98,7 @@ export default function WatchButton({ productId, compact = false }) {
             ? 'bg-primary text-primary-foreground'
             : 'bg-muted hover:bg-muted/80'
         }`}
-        aria-label={isWatching ? 'Unwatch product' : 'Watch product'}
+        aria-label={isWatching ? t(locale, 'watchlist.unwatch') : t(locale, 'watchlist.watch')}
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -123,12 +126,12 @@ export default function WatchButton({ productId, compact = false }) {
       ) : isWatching ? (
         <>
           <Bell className="h-4 w-4" />
-          <span>Watching</span>
+          <span>{t(locale, 'watchlist.watching')}</span>
         </>
       ) : (
         <>
           <BellOff className="h-4 w-4" />
-          <span>Watch Product</span>
+          <span>{t(locale, 'watchlist.watch')}</span>
         </>
       )}
     </button>

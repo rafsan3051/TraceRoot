@@ -5,6 +5,8 @@ import { useAuth } from '@/lib/auth/auth-context'
 import { QRCodeCanvas } from 'qrcode.react'
 import { Download, Copy, Printer } from 'lucide-react'
 import { buildSecureQRValue } from '@/lib/qr/qr-token'
+import { useLocale } from '@/lib/i18n/locale-context'
+import { t } from '@/lib/i18n/translations'
 
 /**
  * QrCodeCard
@@ -24,6 +26,7 @@ export default function QrCodeCard({
   printMode = false 
 }) {
   const { user } = useAuth()
+  const { locale } = useLocale()
   const codeRef = useRef(null)
   const [qrValue, setQrValue] = useState('')
   const [isGenerating, setIsGenerating] = useState(true)
@@ -101,7 +104,7 @@ export default function QrCodeCard({
         <div className="p-2 rounded-md bg-white shadow-sm ring-1 ring-black/5 w-32 h-32 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
         </div>
-        <p className="text-xs text-muted-foreground">Generating secure QR...</p>
+        <p className="text-xs text-muted-foreground">{t(locale, 'product.qrGenerating')}</p>
       </div>
     )
   }
@@ -111,7 +114,7 @@ export default function QrCodeCard({
       <div
         ref={codeRef}
         className="p-2 rounded-md bg-white shadow-sm ring-1 ring-black/5"
-        aria-label="Product verification QR code"
+        aria-label={t(locale, 'product.qrCode')}
       >
         <QRCodeCanvas
           value={qrValue}
@@ -124,24 +127,24 @@ export default function QrCodeCard({
         />
       </div>
       <p className="text-xs sm:text-sm text-muted-foreground">
-        Scan to verify
+        {t(locale, 'common.scanToVerify')}
       </p>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => navigator.clipboard?.writeText(qrValue)}
           className="inline-flex items-center gap-1.5 px-2 py-1 rounded border text-xs hover:bg-muted"
-          aria-label="Copy QR link"
+          aria-label={t(locale, 'product.copyQrLink')}
         >
-          <Copy className="h-3.5 w-3.5" /> Copy link
+          <Copy className="h-3.5 w-3.5" /> {t(locale, 'common.copyLink')}
         </button>
         {canDownload && (
           <button
             onClick={handleDownload}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border bg-muted/50 hover:bg-muted transition text-xs sm:text-sm"
-            aria-label="Download QR code"
+            aria-label={t(locale, 'product.downloadQR')}
           >
-            <Download className="h-4 w-4" /> Download QR
+            <Download className="h-4 w-4" /> {t(locale, 'product.downloadQR')}
           </button>
         )}
       </div>
