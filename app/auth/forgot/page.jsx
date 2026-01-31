@@ -313,7 +313,7 @@ export default function ForgotPasswordPage() {
                 }}
                 className="w-full text-blue-600 dark:text-blue-400 hover:underline text-sm"
               >
-                Didn't receive code? Send again
+                Didn&apos;t receive code? Send again
               </button>
             </form>
           )}

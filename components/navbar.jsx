@@ -16,7 +16,6 @@ export function Navbar() {
   const { locale, setLocale } = useLocale()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   const menuItems = [
     { href: '/', label: t(locale, 'nav.home') },
     { href: '/products', label: t(locale, 'nav.products') },

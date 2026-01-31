@@ -6,9 +6,12 @@ import { comparePasswords, createToken } from '../../../../lib/auth/auth-utils'
 export async function POST(request) {
   try {
     const body = await request.json()
+    
+    console.log('🔐 Login attempt:', { email: body.email, hasPassword: !!body.password })
 
     // Validate input
     if (!body.email || !body.password) {
+      console.log('❌ Validation failed: missing email or password')
       return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
@@ -17,20 +20,25 @@ export async function POST(request) {
 
     // Try to find user by email first, then by username, then fallback to name for backward compatibility
     let user = await prisma.user.findUnique({ where: { email: body.email } })
+    console.log('👤 User lookup by email:', user ? `Found: ${user.email}` : 'Not found')
 
     if (!user) {
       user = await prisma.user.findUnique({ where: { username: body.email } }).catch(() => null)
+      console.log('👤 User lookup by username:', user ? `Found: ${user.email}` : 'Not found')
     }
 
     if (!user) {
       user = await prisma.user.findFirst({ where: { name: body.email } }) // legacy fallback
+      console.log('👤 User lookup by name:', user ? `Found: ${user.email}` : 'Not found')
     }
 
     if (!user) {
+      console.log('❌ User not found in database')
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
     const isValidPassword = await comparePasswords(body.password, user.password)
+    console.log('🔑 Password validation:', isValidPassword ? '✅ Valid' : '❌ Invalid')
 
     if (!isValidPassword) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })

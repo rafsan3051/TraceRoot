@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node scripts/seed.js",
+    "fresh-seed": "node scripts/fresh-seed.js",
     "fabric:network:start": "cd fabric-network && ./network.sh up createChannel",
     "fabric:network:down": "cd fabric-network && ./network.sh down",
     "fabric:chaincode:deploy": "node scripts/deploy-chaincode.js",

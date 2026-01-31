@@ -1,18 +1,13 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const LocaleContext = createContext({
   locale: 'en-BD',
   setLocale: () => {},
 })
 
-// Get locale from localStorage only on client, default on server
-function getInitialLocale() {
-  // Server-side always returns default
-  if (typeof window === 'undefined') return 'en-BD'
-  
-  // Client-side reads from localStorage once
+function getClientLocale() {
   try {
     const cookieMatch = document.cookie.match(/(?:^|; )locale=([^;]+)/)
     const cookieLocale = cookieMatch ? decodeURIComponent(cookieMatch[1]) : null
@@ -31,8 +26,16 @@ function getInitialLocale() {
 }
 
 export function LocaleProvider({ children }) {
-  // Use lazy initializer - only runs once, no effects needed
-  const [locale, setLocaleState] = useState(getInitialLocale)
+  const [locale, setLocaleState] = useState('en-BD')
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const next = getClientLocale()
+    if (next !== locale) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocaleState(next)
+    }
+  }, [locale])
 
   const setLocale = (newLocale) => {
     setLocaleState(newLocale)

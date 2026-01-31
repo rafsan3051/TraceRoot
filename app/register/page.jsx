@@ -175,8 +175,8 @@ export default function RegisterProduct() {
           <div className="flex flex-col items-center space-y-4">
             <QrCodeCard
               productId={product.id}
-              versionKey={product.createdAt || Date.now()}
-              size={window.innerWidth < 640 ? 160 : 200}
+              versionKey={product.createdAt || ''}
+              size={typeof window !== 'undefined' ? (window.innerWidth < 640 ? 160 : 200) : 200}
             />
           </div>
 
